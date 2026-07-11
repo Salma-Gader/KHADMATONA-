@@ -2,12 +2,13 @@
 
 use App\Core\Localization\Http\Middleware\SetLocale;
 use App\Core\Support\Http\ApiResponse;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -21,6 +22,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Lets Sanctum authenticate first-party SPA requests via a session
+        // cookie instead of a bearer token (CLAUDE.md §3: SPA cookie + token
+        // abilities).
+        $middleware->statefulApi();
+
         $middleware->appendToGroup('api', [
             SetLocale::class,
         ]);
@@ -29,6 +35,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (ValidationException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return ApiResponse::error($e->getMessage(), $e->errors(), 422, 'validation_error');
+            }
+        });
+
+        $exceptions->render(function (ThrottleRequestsException $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return ApiResponse::error('Too many attempts. Please try again later.', [], 429, 'too_many_requests');
             }
         });
 
