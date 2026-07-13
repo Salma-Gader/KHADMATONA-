@@ -3,6 +3,7 @@
 namespace App\Core\Support\QueryFilters;
 
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 /**
@@ -20,7 +21,7 @@ abstract class BaseQueryFilter
     abstract protected function subject(): string;
 
     /**
-     * @return array<int, string|\Spatie\QueryBuilder\AllowedFilter>
+     * @return array<int, string|AllowedFilter>
      */
     abstract protected function allowedFilters(): array;
 
@@ -42,9 +43,12 @@ abstract class BaseQueryFilter
 
     public function apply(): QueryBuilder
     {
+        // allowedFilters()/allowedSorts()/allowedIncludes() are variadic
+        // (AllowedFilter|string ...$filters) - spread each module's array,
+        // don't pass it as a single positional argument.
         return QueryBuilder::for($this->subject(), $this->request)
-            ->allowedFilters($this->allowedFilters())
-            ->allowedSorts($this->allowedSorts())
-            ->allowedIncludes($this->allowedIncludes());
+            ->allowedFilters(...$this->allowedFilters())
+            ->allowedSorts(...$this->allowedSorts())
+            ->allowedIncludes(...$this->allowedIncludes());
     }
 }

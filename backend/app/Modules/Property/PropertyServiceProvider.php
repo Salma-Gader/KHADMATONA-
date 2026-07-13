@@ -2,14 +2,15 @@
 
 namespace App\Modules\Property;
 
+use App\Modules\Property\Domain\Contracts\PropertyRepositoryInterface;
+use App\Modules\Property\Infrastructure\Repositories\EloquentPropertyRepository;
 use Illuminate\Support\ServiceProvider;
 
 class PropertyServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // Repository interface -> Eloquent implementation bindings land
-        // here once the module has models to bind.
+        $this->app->bind(PropertyRepositoryInterface::class, EloquentPropertyRepository::class);
     }
 
     public function boot(): void

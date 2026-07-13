@@ -76,7 +76,7 @@ export function UserMenu() {
             disabled={isLoggingOut}
             className="w-full px-3.5 py-2.5 text-left text-sm font-semibold text-error hover:bg-error-surface disabled:opacity-50"
           >
-            {isLoggingOut ? "Signing out…" : "Sign out"}
+            {isLoggingOut ? "Déconnexion…" : "Déconnexion"}
           </button>
         </div>
       )}

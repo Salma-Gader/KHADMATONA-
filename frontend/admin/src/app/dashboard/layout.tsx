@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Sidebar } from "@/components/layout/sidebar";
@@ -27,6 +27,7 @@ export default function DashboardLayout({
 }>) {
   const { user, isLoading, error, refresh } = useAuth();
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Only redirect once the session check has actually completed and
   // confirmed there's no one logged in - not while it's still in flight,
@@ -39,18 +40,18 @@ export default function DashboardLayout({
   }, [isLoading, user, error, router]);
 
   if (isLoading) {
-    return <FullScreenSpinner label="Loading" />;
+    return <FullScreenSpinner label="Chargement" />;
   }
 
   if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-mist px-6">
         <div className="w-full max-w-sm text-center">
-          <Alert tone="error" title="Couldn't verify your session">
+          <Alert tone="error" title="Impossible de vérifier votre session">
             {error}
           </Alert>
           <Button onClick={() => refresh()} className="mt-5">
-            Try again
+            Réessayer
           </Button>
         </div>
       </div>
@@ -61,15 +62,15 @@ export default function DashboardLayout({
     // Confirmed logged out - the effect above is redirecting to /login.
     // Keep showing a spinner (never a bare blank page) while that
     // navigation completes.
-    return <FullScreenSpinner label="Redirecting" />;
+    return <FullScreenSpinner label="Redirection" />;
   }
 
   return (
-    <div className="flex min-h-screen bg-mist">
-      <Sidebar />
-      <div className="flex flex-1 flex-col">
-        <Topbar />
-        <main className="flex-1 p-6 md:p-8">{children}</main>
+    <div className="flex min-h-screen overflow-x-hidden bg-mist">
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <Topbar onMenuClick={() => setSidebarOpen(true)} />
+        <main className="min-w-0 flex-1 p-4 sm:p-6 md:p-8">{children}</main>
       </div>
     </div>
   );

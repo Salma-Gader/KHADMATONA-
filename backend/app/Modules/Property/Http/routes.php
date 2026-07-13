@@ -1,6 +1,8 @@
 <?php
 
-// Property module endpoints land here (CRUD, publish workflow, gallery
-// management) once the concrete MVP database design phase begins.
-// Deliberately empty for now - the module is wired (provider,
-// migrations path, route inclusion) but not yet implemented.
+use App\Modules\Property\Http\Controllers\PropertyController;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('properties', PropertyController::class);
+});

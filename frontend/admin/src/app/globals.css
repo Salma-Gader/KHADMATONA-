@@ -126,6 +126,10 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
+  /* Defensive clamp: every wide element (tables, charts) already owns its
+     own overflow-x-auto container, so the page itself should never need
+     to scroll horizontally - this just guards against a stray regression. */
+  overflow-x: hidden;
 }
 
 ::selection {
