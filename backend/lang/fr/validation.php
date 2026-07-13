@@ -164,6 +164,17 @@ return [
         'password' => 'mot de passe',
         'password_confirmation' => 'confirmation du mot de passe',
         'token' => 'jeton',
+        'title' => 'titre',
+        'type' => 'type',
+        'status' => 'statut',
+        'city' => 'ville',
+        'address' => 'adresse',
+        'price' => 'prix',
+        'surface' => 'surface',
+        'bedrooms' => 'chambres',
+        'bathrooms' => 'salles de bain',
+        'description' => 'description',
+        'image' => 'image',
     ],
 
 ];

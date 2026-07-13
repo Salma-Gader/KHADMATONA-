@@ -164,6 +164,17 @@ return [
         'password' => 'كلمة المرور',
         'password_confirmation' => 'تأكيد كلمة المرور',
         'token' => 'الرمز',
+        'title' => 'العنوان',
+        'type' => 'النوع',
+        'status' => 'الحالة',
+        'city' => 'المدينة',
+        'address' => 'العنوان التفصيلي',
+        'price' => 'السعر',
+        'surface' => 'المساحة',
+        'bedrooms' => 'غرف النوم',
+        'bathrooms' => 'الحمامات',
+        'description' => 'الوصف',
+        'image' => 'الصورة',
     ],
 
 ];

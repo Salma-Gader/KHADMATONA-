@@ -90,7 +90,7 @@ export default function LoginPage() {
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <label className="flex items-center gap-2 text-sm text-text">
             <input
               type="checkbox"

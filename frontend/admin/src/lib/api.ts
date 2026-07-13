@@ -97,11 +97,12 @@ async function ensureCsrfCookie(force = false): Promise<void> {
   });
 }
 
-async function request<T>(
+/** Full envelope (data + meta), for callers that need pagination info etc. */
+async function requestEnvelope<T>(
   path: string,
   options: RequestInit = {},
   retrying = false,
-): Promise<T> {
+): Promise<ApiSuccess<T>> {
   const method = (options.method ?? "GET").toUpperCase();
   const isMutating = method !== "GET" && method !== "HEAD";
 
@@ -126,7 +127,7 @@ async function request<T>(
   // A stale CSRF cookie (e.g. after a session change elsewhere) fails once
   // with 419 - refresh it and retry exactly once.
   if (response.status === 419 && !retrying) {
-    return request<T>(path, options, true);
+    return requestEnvelope<T>(path, options, true);
   }
 
   const payload =
@@ -142,14 +143,29 @@ async function request<T>(
     );
   }
 
-  return (payload as ApiSuccess<T>).data;
+  return (
+    response.status === 204 ? { success: true, data: null as T } : payload
+  ) as ApiSuccess<T>;
+}
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const envelope = await requestEnvelope<T>(path, options);
+  return envelope.data;
 }
 
 export const api = {
   get: <T,>(path: string) => request<T>(path),
+  /** Same as `get`, but also returns the response's `meta` (e.g. pagination). */
+  getWithMeta: <T,>(path: string) => requestEnvelope<T>(path),
   post: <T,>(path: string, body?: unknown) =>
     request<T>(path, {
       method: "POST",
       body: body !== undefined ? JSON.stringify(body) : undefined,
     }),
+  put: <T,>(path: string, body?: unknown) =>
+    request<T>(path, {
+      method: "PUT",
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    }),
+  delete: <T,>(path: string) => request<T>(path, { method: "DELETE" }),
 };

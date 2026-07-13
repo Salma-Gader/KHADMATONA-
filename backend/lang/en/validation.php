@@ -164,6 +164,17 @@ return [
         'password' => 'password',
         'password_confirmation' => 'password confirmation',
         'token' => 'token',
+        'title' => 'title',
+        'type' => 'type',
+        'status' => 'status',
+        'city' => 'city',
+        'address' => 'address',
+        'price' => 'price',
+        'surface' => 'surface',
+        'bedrooms' => 'bedrooms',
+        'bathrooms' => 'bathrooms',
+        'description' => 'description',
+        'image' => 'image',
     ],
 
 ];

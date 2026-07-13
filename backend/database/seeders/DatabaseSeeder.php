@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Core\Permissions\Database\Seeders\PermissionSeeder;
 use App\Models\User;
+use App\Modules\Property\Database\Seeders\PropertySeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -20,11 +21,15 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(PermissionSeeder::class);
 
-        $admin = User::factory()->create([
-            'name' => 'KHADMATONA Admin',
-            'email' => 'admin@khadmatona.test',
-        ]);
+        if (! User::where('email', 'admin@khadmatona.test')->exists()) {
+            $admin = User::factory()->create([
+                'name' => 'KHADMATONA Admin',
+                'email' => 'admin@khadmatona.test',
+            ]);
 
-        $admin->assignRole('Admin');
+            $admin->assignRole('Admin');
+        }
+
+        $this->call(PropertySeeder::class);
     }
 }

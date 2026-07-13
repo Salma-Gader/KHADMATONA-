@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 interface NavItem {
   href: string;
@@ -51,56 +51,113 @@ function SettingsIcon() {
   );
 }
 
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8}>
+      <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 const items: NavItem[] = [
-  { href: "/dashboard", label: "Overview", icon: <HomeIcon /> },
-  { href: "/dashboard/properties", label: "Properties", icon: <BuildingIcon />, comingSoon: true },
-  { href: "/dashboard/users", label: "Users", icon: <UsersIcon />, comingSoon: true },
-  { href: "/dashboard/settings", label: "Settings", icon: <SettingsIcon />, comingSoon: true },
+  { href: "/dashboard", label: "Aperçu", icon: <HomeIcon /> },
+  { href: "/dashboard/properties", label: "Propriétés", icon: <BuildingIcon /> },
+  { href: "/dashboard/users", label: "Utilisateurs", icon: <UsersIcon />, comingSoon: true },
+  { href: "/dashboard/settings", label: "Paramètres", icon: <SettingsIcon />, comingSoon: true },
 ];
 
-export function Sidebar() {
+export function Sidebar({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const pathname = usePathname();
 
+  useEffect(() => {
+    if (!open) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [open, onClose]);
+
   return (
-    <aside className="hidden w-60 shrink-0 flex-col gap-1 bg-ink p-5 text-white/70 md:flex">
-      <p className="mb-4 px-2 font-display text-xl font-semibold text-white">
-        Khadmatona
-      </p>
-      {items.map((item) => {
-        const active = pathname === item.href;
-        if (item.comingSoon) {
-          return (
-            <span
-              key={item.href}
-              aria-disabled="true"
-              className="flex items-center justify-between gap-2 rounded-sm px-3 py-2 text-sm text-white/35"
-            >
-              <span className="flex items-center gap-2">
-                {item.icon}
-                {item.label}
-              </span>
-              <span className="rounded-full bg-white/10 px-2 py-0.5 text-[0.6rem] font-bold tracking-wide uppercase">
-                Soon
-              </span>
-            </span>
-          );
-        }
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={clsx(
-              "flex items-center gap-2 rounded-sm px-3 py-2 text-sm font-semibold transition-colors",
-              active
-                ? "bg-gold-primary/18 text-gold-secondary"
-                : "text-white/70 hover:bg-white/5 hover:text-white",
-            )}
+    <>
+      {/* Mobile/tablet overlay - dismisses the drawer on outside click. */}
+      <div
+        aria-hidden="true"
+        onClick={onClose}
+        className={clsx(
+          "fixed inset-0 z-40 bg-ink/50 transition-opacity duration-300 lg:hidden",
+          open ? "opacity-100" : "pointer-events-none opacity-0",
+        )}
+      />
+
+      <aside
+        className={clsx(
+          "fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col gap-1 overflow-y-auto bg-ink p-5 text-white/70",
+          "transition-transform duration-300 ease-in-out",
+          open ? "translate-x-0" : "-translate-x-full",
+          "lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:w-60 lg:max-w-none lg:translate-x-0",
+        )}
+      >
+        <div className="mb-4 flex items-center justify-between px-2">
+          <p className="font-display text-xl font-semibold text-white">
+            Khadmatona
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fermer le menu"
+            className="rounded-md p-1 text-white/70 hover:bg-white/10 hover:text-white lg:hidden"
           >
-            {item.icon}
-            {item.label}
-          </Link>
-        );
-      })}
-    </aside>
+            <CloseIcon />
+          </button>
+        </div>
+        {items.map((item) => {
+          const active =
+            item.href === "/dashboard"
+              ? pathname === item.href
+              : pathname.startsWith(item.href);
+          if (item.comingSoon) {
+            return (
+              <span
+                key={item.href}
+                aria-disabled="true"
+                className="flex items-center justify-between gap-2 rounded-sm px-3 py-2 text-sm text-white/35"
+              >
+                <span className="flex items-center gap-2">
+                  {item.icon}
+                  {item.label}
+                </span>
+                <span className="rounded-full bg-white/10 px-2 py-0.5 text-[0.6rem] font-bold tracking-wide uppercase">
+                  Bientôt
+                </span>
+              </span>
+            );
+          }
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onClose}
+              className={clsx(
+                "flex items-center gap-2 rounded-sm px-3 py-2 text-sm font-semibold transition-colors",
+                active
+                  ? "bg-gold-primary/18 text-gold-secondary"
+                  : "text-white/70 hover:bg-white/5 hover:text-white",
+              )}
+            >
+              {item.icon}
+              {item.label}
+            </Link>
+          );
+        })}
+      </aside>
+    </>
   );
 }
