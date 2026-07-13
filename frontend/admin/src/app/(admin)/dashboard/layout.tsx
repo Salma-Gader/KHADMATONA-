@@ -69,7 +69,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen overflow-x-hidden bg-mist">
+    <div className="flex min-h-screen bg-mist">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar onMenuClick={() => setSidebarOpen(true)} />

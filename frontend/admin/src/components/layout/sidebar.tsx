@@ -104,8 +104,8 @@ export function Sidebar({
         className={clsx(
           "fixed inset-y-0 start-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col gap-1 overflow-y-auto bg-ink p-5 text-white/70",
           "transition-transform duration-300 ease-in-out",
-          open ? "translate-x-0" : "-translate-x-full rtl:translate-x-full",
-          "lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:w-60 lg:max-w-none lg:translate-x-0",
+          open ? "translate-x-0" : "max-lg:-translate-x-full max-lg:rtl:translate-x-full",
+          "lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:w-60 lg:max-w-none",
         )}
       >
         <div className="mb-4 flex items-center justify-between px-2">
