@@ -117,6 +117,16 @@ async function requestEnvelope<T>(
     const token = readCookie("XSRF-TOKEN");
     if (token) headers.set("X-XSRF-TOKEN", token);
   }
+  // Guarded to browser-only: this module is also called from Server
+  // Components during SSR (e.g. the homepage's listProperties()), where
+  // `document` doesn't exist. The backend's own locale-aware error/
+  // validation messages only ever surface from client-triggered mutations
+  // (form submissions), which always run in the browser, so this still
+  // covers the case that matters.
+  if (typeof document !== "undefined") {
+    const locale = readCookie("NEXT_LOCALE");
+    if (locale) headers.set("Accept-Language", locale);
+  }
 
   const response = await fetchWithTimeout(`${API_URL}${path}`, {
     ...options,

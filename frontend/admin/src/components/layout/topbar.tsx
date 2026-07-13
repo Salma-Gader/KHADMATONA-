@@ -1,3 +1,7 @@
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { LocaleSwitcher } from "@/components/layout/locale-switcher";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { UserMenu } from "./user-menu";
 
 function MenuIcon() {
@@ -9,22 +13,28 @@ function MenuIcon() {
 }
 
 export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
+  const nav = useTranslations("Nav");
+
   return (
     <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between gap-3 border-b border-border bg-surface px-4 sm:px-6 lg:justify-end">
       <div className="flex min-w-0 items-center gap-3 lg:hidden">
         <button
           type="button"
           onClick={onMenuClick}
-          aria-label="Ouvrir le menu"
+          aria-label={nav("openMenu")}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-text hover:bg-surface-muted"
         >
           <MenuIcon />
         </button>
-        <span className="truncate font-display text-lg font-semibold text-text">
-          Khadmatona
-        </span>
+        <Link href="/" className="truncate font-display text-lg font-semibold text-text">
+          {nav("brand")}
+        </Link>
       </div>
-      <UserMenu />
+      <div className="flex items-center gap-2">
+        <ThemeToggle />
+        <LocaleSwitcher />
+        <UserMenu />
+      </div>
     </header>
   );
 }

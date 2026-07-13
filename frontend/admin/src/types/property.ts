@@ -48,19 +48,23 @@ export interface Pagination {
   total: number;
 }
 
-export const PROPERTY_TYPE_LABELS: Record<PropertyType, string> = {
-  appartement: "Appartement",
-  villa: "Villa",
-  riad: "Riad",
-  maison: "Maison",
-  terrain: "Terrain",
-  bureau: "Bureau",
-  local: "Local commercial",
-};
+// Labels are no longer hardcoded here - PropertyType/PropertyStatus values
+// double as translation keys under the "PropertyType"/"PropertyStatus"
+// message namespaces (messages/{locale}.json), looked up via
+// useTranslations("PropertyType")(type) at each call site.
+export const PROPERTY_TYPES: PropertyType[] = [
+  "appartement",
+  "villa",
+  "riad",
+  "maison",
+  "terrain",
+  "bureau",
+  "local",
+];
 
-export const PROPERTY_STATUS_LABELS: Record<PropertyStatus, string> = {
-  disponible: "Disponible",
-  reserve: "Réservé",
-  vendu: "Vendu",
-  loue: "Loué",
-};
+export const PROPERTY_STATUSES: PropertyStatus[] = [
+  "disponible",
+  "reserve",
+  "vendu",
+  "loue",
+];

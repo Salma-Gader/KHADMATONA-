@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTranslations } from "next-intl";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -8,8 +9,8 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { ApiError } from "@/lib/api";
 import {
-  PROPERTY_STATUS_LABELS,
-  PROPERTY_TYPE_LABELS,
+  PROPERTY_STATUSES,
+  PROPERTY_TYPES,
   type PropertyFormValues,
   type PropertyStatus,
   type PropertyType,
@@ -38,6 +39,9 @@ export function PropertyForm({
   submitLabel: string;
   onSubmit: (values: PropertyFormValues) => Promise<void>;
 }) {
+  const t = useTranslations("PropertyForm");
+  const propertyType = useTranslations("PropertyType");
+  const propertyStatus = useTranslations("PropertyStatus");
   const [values, setValues] = useState<PropertyFormValues>({
     ...EMPTY_VALUES,
     ...initialValues,
@@ -69,11 +73,7 @@ export function PropertyForm({
         }
         setFieldErrors(flattened);
       } else {
-        setFormError(
-          caught instanceof ApiError
-            ? caught.message
-            : "Une erreur est survenue. Veuillez réessayer.",
-        );
+        setFormError(caught instanceof ApiError ? caught.message : t("genericError"));
       }
     } finally {
       setIsSubmitting(false);
@@ -85,7 +85,7 @@ export function PropertyForm({
       {formError && <Alert tone="error">{formError}</Alert>}
 
       <Field
-        label="Titre"
+        label={t("title")}
         required
         value={values.title}
         onChange={(event) => set("title", event.target.value)}
@@ -94,29 +94,29 @@ export function PropertyForm({
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <Select
-          label="Type de bien"
+          label={t("propertyType")}
           value={values.type}
           onChange={(event) => set("type", event.target.value as PropertyType)}
           error={fieldErrors.type}
         >
-          {Object.entries(PROPERTY_TYPE_LABELS).map(([value, label]) => (
+          {PROPERTY_TYPES.map((value) => (
             <option key={value} value={value}>
-              {label}
+              {propertyType(value)}
             </option>
           ))}
         </Select>
 
         <Select
-          label="Statut"
+          label={t("status")}
           value={values.status}
           onChange={(event) =>
             set("status", event.target.value as PropertyStatus)
           }
           error={fieldErrors.status}
         >
-          {Object.entries(PROPERTY_STATUS_LABELS).map(([value, label]) => (
+          {PROPERTY_STATUSES.map((value) => (
             <option key={value} value={value}>
-              {label}
+              {propertyStatus(value)}
             </option>
           ))}
         </Select>
@@ -124,14 +124,14 @@ export function PropertyForm({
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <Field
-          label="Ville"
+          label={t("city")}
           required
           value={values.city}
           onChange={(event) => set("city", event.target.value)}
           error={fieldErrors.city}
         />
         <Field
-          label="Adresse"
+          label={t("address")}
           required
           value={values.address}
           onChange={(event) => set("address", event.target.value)}
@@ -141,7 +141,7 @@ export function PropertyForm({
 
       <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
         <Field
-          label="Prix (MAD)"
+          label={t("price")}
           type="number"
           min={0}
           required
@@ -150,7 +150,7 @@ export function PropertyForm({
           error={fieldErrors.price}
         />
         <Field
-          label="Surface (m²)"
+          label={t("surface")}
           type="number"
           min={0}
           required
@@ -159,7 +159,7 @@ export function PropertyForm({
           error={fieldErrors.surface}
         />
         <Field
-          label="Chambres"
+          label={t("bedrooms")}
           type="number"
           min={0}
           value={values.bedrooms}
@@ -167,7 +167,7 @@ export function PropertyForm({
           error={fieldErrors.bedrooms}
         />
         <Field
-          label="Salles de bain"
+          label={t("bathrooms")}
           type="number"
           min={0}
           value={values.bathrooms}
@@ -177,15 +177,15 @@ export function PropertyForm({
       </div>
 
       <Field
-        label="Image (URL)"
+        label={t("image")}
         value={values.image}
         onChange={(event) => set("image", event.target.value)}
         error={fieldErrors.image}
-        hint="Optionnel - lien vers une image du bien."
+        hint={t("imageHint")}
       />
 
       <Textarea
-        label="Description"
+        label={t("description")}
         value={values.description}
         onChange={(event) => set("description", event.target.value)}
         error={fieldErrors.description}

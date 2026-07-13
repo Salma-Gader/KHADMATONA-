@@ -59,6 +59,45 @@ class PropertyFactory extends Factory
     ];
 
     /**
+     * Curated, individually-verified Unsplash photos (real photography,
+     * Unsplash License - free to use) matching each property type, rather
+     * than random unrelated placeholder images. One is picked at random
+     * per property within its own type's pool for variety.
+     */
+    private const IMAGES = [
+        'appartement' => [
+            'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688',
+            'https://images.unsplash.com/photo-1493809842364-78817add7ffb',
+            'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267',
+            'https://images.unsplash.com/photo-1554995207-c18c203602cb',
+        ],
+        'villa' => [
+            'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
+            'https://images.unsplash.com/photo-1512917774080-9991f1c4c750',
+            'https://images.unsplash.com/photo-1587974928442-77dc3e0dba72',
+        ],
+        'riad' => [
+            'https://images.unsplash.com/photo-1524230572899-a752b3835840',
+            'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43',
+        ],
+        'maison' => [
+            'https://images.unsplash.com/photo-1568605114967-8130f3a36994',
+            'https://images.unsplash.com/photo-1464082354059-27db6ce50048',
+        ],
+        'terrain' => [
+            'https://images.unsplash.com/photo-1500382017468-9049fed747ef',
+        ],
+        'bureau' => [
+            'https://images.unsplash.com/photo-1497366216548-37526070297c',
+            'https://images.unsplash.com/photo-1497366811353-6870744d04b2',
+        ],
+        'local' => [
+            'https://images.unsplash.com/photo-1441986300917-64674bd600d8',
+            'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04',
+        ],
+    ];
+
+    /**
      * @return array<string, mixed>
      */
     public function definition(): array
@@ -90,7 +129,7 @@ class PropertyFactory extends Factory
             'bedrooms' => $bedrooms,
             'bathrooms' => fake()->numberBetween(1, max(1, min($bedrooms, 4))),
             'description' => $description,
-            'image' => 'https://picsum.photos/seed/'.fake()->unique()->uuid().'/800/600',
+            'image' => fake()->randomElement(self::IMAGES[$type->value]).'?w=1200&h=800&fit=crop&q=80',
         ];
     }
 }

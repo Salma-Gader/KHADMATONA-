@@ -175,6 +175,9 @@ return [
         'bathrooms' => 'salles de bain',
         'description' => 'description',
         'image' => 'image',
+        'phone' => 'téléphone',
+        'message' => 'message',
+        'property_id' => 'bien concerné',
     ],
 
 ];

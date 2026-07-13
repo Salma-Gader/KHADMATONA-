@@ -21,11 +21,21 @@ class PropertyFilter extends BaseQueryFilter
         return [
             'status',
             'type',
+            'city',
             AllowedFilter::callback('search', function ($query, $value) {
                 $query->where(function ($query) use ($value) {
                     $query->where('title', 'like', "%{$value}%")
                         ->orWhere('city', 'like', "%{$value}%");
                 });
+            }),
+            // Values arrive in MAD (the API's public unit - see
+            // PropertyResource/PropertyController::toAttributes()) and are
+            // converted to cents here to match the stored column.
+            AllowedFilter::callback('price_min', function ($query, $value) {
+                $query->where('price', '>=', (int) round($value * 100));
+            }),
+            AllowedFilter::callback('price_max', function ($query, $value) {
+                $query->where('price', '<=', (int) round($value * 100));
             }),
         ];
     }

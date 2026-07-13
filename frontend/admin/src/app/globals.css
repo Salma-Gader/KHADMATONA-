@@ -76,6 +76,55 @@
   }
 }
 
+/* An explicit in-app toggle (persisted to localStorage, applied via
+   data-theme on <html>) always wins over the OS-level media query above -
+   same token values, just keyed off the attribute instead of the media
+   query so a user who prefers light-in-a-dark-OS (or vice versa) is
+   respected. */
+:root[data-theme="dark"] {
+  --color-bg: var(--color-ink);
+  --color-surface: #17110a;
+  --color-surface-muted: var(--color-charcoal);
+  --color-surface-sunken: #1e1a12;
+  --color-text: var(--color-paper);
+  --color-text-muted: #c9c2b0;
+  --color-text-on-dark: var(--color-ink);
+  --color-border: #3a3225;
+  --color-border-strong: #4a3f2b;
+  --color-success-surface: #182620;
+  --color-warning-surface: #2a1e12;
+  --color-error-surface: #2a1614;
+  --color-info-surface: #171f2c;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md:
+    0 6px 18px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(226, 184, 77, 0.12);
+  --shadow-lg:
+    0 24px 48px rgba(0, 0, 0, 0.55), 0 4px 12px rgba(226, 184, 77, 0.14);
+  --shadow-gold: 0 10px 30px rgba(226, 184, 77, 0.3);
+}
+
+:root[data-theme="light"] {
+  --color-bg: var(--color-paper);
+  --color-surface: var(--color-paper);
+  --color-surface-muted: var(--color-mist);
+  --color-surface-sunken: #f1eee6;
+  --color-text: var(--color-ink);
+  --color-text-muted: #5b5750;
+  --color-text-on-dark: var(--color-paper);
+  --color-border: #e7e2d6;
+  --color-border-strong: #d8d0be;
+  --color-success-surface: #eaf2ec;
+  --color-warning-surface: #fbeee3;
+  --color-error-surface: #f8eae9;
+  --color-info-surface: #eaeef4;
+  --shadow-sm: 0 1px 2px rgba(17, 17, 17, 0.07);
+  --shadow-md:
+    0 6px 16px rgba(17, 17, 17, 0.09), 0 1px 3px rgba(200, 146, 17, 0.1);
+  --shadow-lg:
+    0 20px 44px rgba(17, 17, 17, 0.14), 0 4px 10px rgba(200, 146, 17, 0.1);
+  --shadow-gold: 0 10px 28px rgba(200, 146, 17, 0.28);
+}
+
 /* Maps every design token above into Tailwind v4's utility generator, so
    e.g. --color-gold-primary becomes bg-gold-primary / text-gold-primary. */
 @theme inline {
@@ -120,6 +169,16 @@
   --font-display: var(--font-cormorant), Georgia, serif;
   --font-body: var(--font-manrope), -apple-system, "Segoe UI", sans-serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+  --font-arabic: var(--font-arabic), "Segoe UI", Tahoma, sans-serif;
+}
+
+/* Arabic has no serif/sans split the way Latin does, so both the display
+   and body roles resolve to the same self-hosted Arabic UI face here -
+   every existing font-display/font-body usage across the app picks this
+   up automatically, no component changes needed. */
+html[dir="rtl"] {
+  --font-display: var(--font-arabic), "Segoe UI", Tahoma, sans-serif;
+  --font-body: var(--font-arabic), "Segoe UI", Tahoma, sans-serif;
 }
 
 body {
@@ -130,6 +189,14 @@ body {
      own overflow-x-auto container, so the page itself should never need
      to scroll horizontally - this just guards against a stray regression. */
   overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
 }
 
 ::selection {
@@ -141,4 +208,85 @@ body {
   outline: none;
   box-shadow: 0 0 0 3px rgba(200, 146, 17, 0.35);
   border-radius: var(--radius-xs);
+}
+
+.skeleton {
+  background: linear-gradient(
+    100deg,
+    var(--color-surface-muted) 30%,
+    var(--color-surface-sunken) 50%,
+    var(--color-surface-muted) 70%
+  );
+  background-size: 220% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -20% 0;
+  }
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition {
+  animation: page-fade-in 0.35s ease-out;
+}
+
+/* Hero: slow, one-way zoom on the background photograph - holds at the
+   zoomed frame (forwards) rather than looping, so it reads as a deliberate
+   cinematic settle rather than a distracting animation. */
+@keyframes hero-zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+.animate-hero-zoom {
+  animation: hero-zoom 20s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+/* Hero: staggered fade-up for the eyebrow/title/subtitle/search, driven by
+   each element's own animation-delay (set inline per element). */
+@keyframes hero-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-reveal {
+  opacity: 0;
+  animation: hero-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

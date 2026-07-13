@@ -30,6 +30,16 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('api', [
             SetLocale::class,
         ]);
+
+        // This is an API-only app (CLAUDE.md §2: "no server-rendered public
+        // website in this repository") - there is no named `login` route to
+        // redirect guests to. Without this, Laravel's default Authenticate
+        // middleware calls route('login') for any unauthenticated request
+        // that doesn't explicitly send `Accept: application/json`, which
+        // throws a RouteNotFoundException instead of the intended 401.
+        // Returning null here makes it fall through to AuthenticationException,
+        // already mapped to a clean 401 JSON response below.
+        $middleware->redirectGuestsTo(fn () => null);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (ValidationException $e, Request $request) {

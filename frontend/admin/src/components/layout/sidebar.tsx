@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import clsx from "clsx";
 import { useEffect, type ReactNode } from "react";
 
@@ -59,13 +60,6 @@ function CloseIcon() {
   );
 }
 
-const items: NavItem[] = [
-  { href: "/dashboard", label: "Aperçu", icon: <HomeIcon /> },
-  { href: "/dashboard/properties", label: "Propriétés", icon: <BuildingIcon /> },
-  { href: "/dashboard/users", label: "Utilisateurs", icon: <UsersIcon />, comingSoon: true },
-  { href: "/dashboard/settings", label: "Paramètres", icon: <SettingsIcon />, comingSoon: true },
-];
-
 export function Sidebar({
   open,
   onClose,
@@ -74,6 +68,15 @@ export function Sidebar({
   onClose: () => void;
 }) {
   const pathname = usePathname();
+  const t = useTranslations("Dashboard");
+  const nav = useTranslations("Nav");
+
+  const items: NavItem[] = [
+    { href: "/dashboard", label: t("overview"), icon: <HomeIcon /> },
+    { href: "/dashboard/properties", label: t("properties"), icon: <BuildingIcon /> },
+    { href: "/dashboard/users", label: t("users"), icon: <UsersIcon />, comingSoon: true },
+    { href: "/dashboard/settings", label: t("settings"), icon: <SettingsIcon />, comingSoon: true },
+  ];
 
   useEffect(() => {
     if (!open) return;
@@ -99,20 +102,24 @@ export function Sidebar({
 
       <aside
         className={clsx(
-          "fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col gap-1 overflow-y-auto bg-ink p-5 text-white/70",
+          "fixed inset-y-0 start-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col gap-1 overflow-y-auto bg-ink p-5 text-white/70",
           "transition-transform duration-300 ease-in-out",
-          open ? "translate-x-0" : "-translate-x-full",
+          open ? "translate-x-0" : "-translate-x-full rtl:translate-x-full",
           "lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:w-60 lg:max-w-none lg:translate-x-0",
         )}
       >
         <div className="mb-4 flex items-center justify-between px-2">
-          <p className="font-display text-xl font-semibold text-white">
-            Khadmatona
-          </p>
+          <Link
+            href="/"
+            onClick={onClose}
+            className="font-display text-xl font-semibold text-white transition-opacity hover:opacity-80"
+          >
+            {nav("brand")}
+          </Link>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Fermer le menu"
+            aria-label={nav("closeMenu")}
             className="rounded-md p-1 text-white/70 hover:bg-white/10 hover:text-white lg:hidden"
           >
             <CloseIcon />
@@ -135,7 +142,7 @@ export function Sidebar({
                   {item.label}
                 </span>
                 <span className="rounded-full bg-white/10 px-2 py-0.5 text-[0.6rem] font-bold tracking-wide uppercase">
-                  Bientôt
+                  {t("soon")}
                 </span>
               </span>
             );

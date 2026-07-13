@@ -44,8 +44,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || isLoading}
         aria-busy={isLoading || undefined}
         className={clsx(
-          "inline-flex items-center justify-center gap-2 rounded-md font-bold transition-colors",
-          "disabled:cursor-not-allowed disabled:opacity-40",
+          "inline-flex items-center justify-center gap-2 rounded-md font-bold",
+          "transition-[color,background-color,border-color,box-shadow,transform] duration-150 ease-out",
+          "active:scale-[0.97]",
+          "disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100",
           variantClasses[variant],
           sizeClasses[size],
           className,

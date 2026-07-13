@@ -175,6 +175,9 @@ return [
         'bathrooms' => 'الحمامات',
         'description' => 'الوصف',
         'image' => 'الصورة',
+        'phone' => 'الهاتف',
+        'message' => 'الرسالة',
+        'property_id' => 'العقار المعني',
     ],
 
 ];

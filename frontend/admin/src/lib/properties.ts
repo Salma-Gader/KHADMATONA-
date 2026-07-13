@@ -1,10 +1,23 @@
 import { api } from "@/lib/api";
-import type { Pagination, Property, PropertyFormValues } from "@/types/property";
+import type {
+  Pagination,
+  Property,
+  PropertyFormValues,
+  PropertyStatus,
+  PropertyType,
+} from "@/types/property";
 
 export interface ListPropertiesParams {
   page?: number;
   perPage?: number;
   search?: string;
+  /** Allow-listed on the backend - used by the public listing page's filters. */
+  type?: PropertyType;
+  status?: PropertyStatus;
+  city?: string;
+  priceMin?: number;
+  priceMax?: number;
+  sort?: string;
 }
 
 export interface PropertyList {
@@ -18,8 +31,17 @@ export async function listProperties(
   const query = new URLSearchParams();
   query.set("page", String(params.page ?? 1));
   query.set("per_page", String(params.perPage ?? 10));
-  query.set("sort", "-created_at");
+  query.set("sort", params.sort ?? "-created_at");
   if (params.search) query.set("filter[search]", params.search);
+  if (params.type) query.set("filter[type]", params.type);
+  if (params.status) query.set("filter[status]", params.status);
+  if (params.city) query.set("filter[city]", params.city);
+  if (params.priceMin !== undefined) {
+    query.set("filter[price_min]", String(params.priceMin));
+  }
+  if (params.priceMax !== undefined) {
+    query.set("filter[price_max]", String(params.priceMax));
+  }
 
   const envelope = await api.getWithMeta<Property[]>(
     `/api/v1/properties?${query.toString()}`,

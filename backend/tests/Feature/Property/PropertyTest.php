@@ -7,35 +7,71 @@ beforeEach(function () {
     $this->user = User::factory()->create();
 });
 
-test('a guest cannot list properties', function () {
-    $this->getJson('/api/v1/properties')->assertStatus(401);
-});
-
-test('an authenticated user can list properties', function () {
+test('a guest can list properties', function () {
     Property::factory()->count(3)->create();
 
-    $response = $this->actingAs($this->user)->getJson('/api/v1/properties');
+    $response = $this->getJson('/api/v1/properties');
 
     $response->assertOk()->assertJsonCount(3, 'data');
+});
+
+test('a guest can view a single property', function () {
+    $property = Property::factory()->create();
+
+    $response = $this->getJson("/api/v1/properties/{$property->id}");
+
+    $response->assertOk()->assertJsonPath('data.id', $property->id);
+});
+
+test('a guest cannot create, update, or delete a property', function () {
+    $property = Property::factory()->create();
+
+    $this->postJson('/api/v1/properties', [])->assertStatus(401);
+    $this->putJson("/api/v1/properties/{$property->id}", [])->assertStatus(401);
+    $this->deleteJson("/api/v1/properties/{$property->id}")->assertStatus(401);
 });
 
 test('the property list is paginated', function () {
     Property::factory()->count(20)->create();
 
-    $response = $this->actingAs($this->user)->getJson('/api/v1/properties?per_page=5');
+    $response = $this->getJson('/api/v1/properties?per_page=5');
 
     $response->assertOk()
         ->assertJsonCount(5, 'data')
         ->assertJsonPath('meta.pagination.total', 20);
 });
 
+test('properties can be filtered by price range', function () {
+    Property::factory()->create(['title' => 'Bien abordable', 'price' => 20_000_000]); // 200 000 MAD
+    Property::factory()->create(['title' => 'Bien de luxe', 'price' => 500_000_000]); // 5 000 000 MAD
+
+    $response = $this->getJson('/api/v1/properties?'.http_build_query([
+        'filter' => ['price_min' => 100_000, 'price_max' => 1_000_000],
+    ]));
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.title', 'Bien abordable');
+});
+
 test('properties can be searched by title or city', function () {
     Property::factory()->create(['title' => 'Villa unique à Essaouira', 'city' => 'Essaouira']);
     Property::factory()->create(['title' => 'Appartement à Rabat', 'city' => 'Rabat']);
 
-    $response = $this->actingAs($this->user)->getJson('/api/v1/properties?filter[search]=Essaouira');
+    $response = $this->getJson('/api/v1/properties?filter[search]=Essaouira');
 
     $response->assertOk()->assertJsonCount(1, 'data');
+});
+
+test('properties can be filtered by an exact city', function () {
+    Property::factory()->create(['city' => 'Essaouira']);
+    Property::factory()->create(['city' => 'Rabat']);
+
+    $response = $this->getJson('/api/v1/properties?filter[city]=Rabat');
+
+    $response->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.city', 'Rabat');
 });
 
 test('an authenticated user can create a property', function () {
