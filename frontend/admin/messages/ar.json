@@ -25,7 +25,10 @@
     "weekdays": "الاثنين – الجمعة: 9 صباحًا – 6 مساءً",
     "saturday": "السبت: 9 صباحًا – 1 ظهرًا",
     "rights": "جميع الحقوق محفوظة.",
-    "location": "مراكش، المغرب"
+    "location": "مراكش، المغرب",
+    "followUs": "تابعونا",
+    "findUs": "أين نجدك",
+    "viewOnMap": "عرض على خرائط Google"
   },
   "Home": {
     "eyebrow": "مراكش · عقارات فاخرة",
@@ -193,11 +196,17 @@
     "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
     "resetPassword": "إعادة تعيين كلمة المرور",
     "signOut": "تسجيل الخروج",
-    "signingOut": "جارٍ تسجيل الخروج…"
+    "signingOut": "جارٍ تسجيل الخروج…",
+    "profile": "الملف الشخصي"
   },
   "Dashboard": {
     "overview": "نظرة عامة",
     "properties": "العقارات",
+    "leads": "الطلبات",
+    "contactMessages": "رسائل التواصل",
+    "saleRequests": "طلبات البيع",
+    "rentalRequests": "طلبات الكراء",
+    "visitRequests": "طلبات الزيارة",
     "users": "المستخدمون",
     "settings": "الإعدادات",
     "soon": "قريبًا",
@@ -275,6 +284,91 @@
     "imageHint": "اختياري - رابط صورة العقار.",
     "description": "الوصف",
     "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+  },
+  "DashboardLeads": {
+    "searchPlaceholder": "البحث بالاسم أو البريد الإلكتروني…",
+    "genericError": "حدث خطأ ما.",
+    "noResultsTitle": "لم يتم العثور على أي طلب",
+    "noResultsWithSearch": "جرّب بحثًا مختلفًا.",
+    "noResultsEmpty": "لا توجد طلبات بعد.",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "type": "النوع",
+    "status": "الحالة",
+    "submittedOn": "تاريخ الاستلام",
+    "actions": "الإجراءات",
+    "view": "عرض",
+    "deleting": "جارٍ الحذف…",
+    "delete": "حذف",
+    "confirmDelete": "حذف طلب \"{name}\"؟",
+    "deleteError": "فشل الحذف.",
+    "contactTitle": "رسائل التواصل",
+    "contactSubtitle": "الرسائل المرسلة عبر نموذج التواصل.",
+    "sellTitle": "طلبات البيع",
+    "sellSubtitle": "مالكون يرغبون في بيع عقار.",
+    "rentTitle": "طلبات الكراء",
+    "rentSubtitle": "مالكون يرغبون في كراء عقار.",
+    "visitTitle": "طلبات الزيارة",
+    "visitSubtitle": "زوار يرغبون في زيارة عقار."
+  },
+  "LeadStatus": {
+    "new": "جديد",
+    "contacted": "تم التواصل",
+    "closed": "مغلق"
+  },
+  "LeadType": {
+    "contact": "تواصل",
+    "sell_request": "بيع",
+    "rent_request": "كراء",
+    "visit_request": "زيارة"
+  },
+  "LeadDetail": {
+    "loading": "جارٍ التحميل…",
+    "notFound": "الطلب غير موجود.",
+    "loadError": "تعذر تحميل هذا الطلب.",
+    "backToList": "→ العودة إلى القائمة",
+    "message": "الرسالة",
+    "noMessage": "لا توجد رسالة.",
+    "linkedProperty": "العقار المعني",
+    "viewProperty": "عرض العقار ←",
+    "details": "التفاصيل",
+    "phone": "الهاتف",
+    "updateStatus": "تحديث الحالة",
+    "statusUpdateError": "فشل تحديث الحالة."
+  },
+  "DashboardUsers": {
+    "title": "المستخدمون",
+    "subtitle": "إدارة حسابات لوحة التحكم.",
+    "createUser": "إنشاء مستخدم",
+    "genericError": "حدث خطأ ما.",
+    "noResultsTitle": "لم يتم العثور على أي مستخدم",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "role": "الدور",
+    "createdOn": "تاريخ الإنشاء",
+    "noRole": "بدون دور",
+    "newTitle": "إنشاء مستخدم",
+    "newSubtitle": "أنشئ حسابًا وحدد له دورًا.",
+    "createSubmit": "إنشاء المستخدم"
+  },
+  "UserForm": {
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "passwordConfirmation": "تأكيد كلمة المرور",
+    "role": "الدور",
+    "loadingRoles": "جارٍ تحميل الأدوار…",
+    "rolesLoadError": "تعذر تحميل قائمة الأدوار.",
+    "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+  },
+  "Profile": {
+    "title": "ملفي الشخصي",
+    "subtitle": "معلومات حسابك.",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "role": "الدور",
+    "noRole": "بدون دور",
+    "memberSince": "عضو منذ"
   },
   "Pagination": {
     "previous": "السابق",

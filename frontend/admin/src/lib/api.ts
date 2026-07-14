@@ -4,7 +4,11 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost";
 // unresponsive API leaves callers (e.g. AuthProvider's initial /auth/me
 // check) awaiting a promise that never settles, which surfaces as a loading
 // state that never resolves - see the dashboard "stuck on loading" incident.
-const REQUEST_TIMEOUT_MS = 15_000;
+// 30s (not 15s) because the local Sail backend's first request after any
+// container restart pays a one-time opcache cold-compile cost of ~15-20s on
+// this machine's slow Docker-on-Windows bind mount - a hard 15s cutoff was
+// aborting exactly that legitimate (if slow) first response.
+const REQUEST_TIMEOUT_MS = 30_000;
 
 interface ApiSuccess<T> {
   success: true;
@@ -175,6 +179,11 @@ export const api = {
   put: <T,>(path: string, body?: unknown) =>
     request<T>(path, {
       method: "PUT",
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    }),
+  patch: <T,>(path: string, body?: unknown) =>
+    request<T>(path, {
+      method: "PATCH",
       body: body !== undefined ? JSON.stringify(body) : undefined,
     }),
   delete: <T,>(path: string) => request<T>(path, { method: "DELETE" }),

@@ -25,7 +25,10 @@
     "weekdays": "Lundi – Vendredi : 9h – 18h",
     "saturday": "Samedi : 9h – 13h",
     "rights": "Tous droits réservés.",
-    "location": "Marrakech, Maroc"
+    "location": "Marrakech, Maroc",
+    "followUs": "Suivez-nous",
+    "findUs": "Où nous trouver",
+    "viewOnMap": "Voir sur Google Maps"
   },
   "Home": {
     "eyebrow": "Marrakech · Immobilier premium",
@@ -193,11 +196,17 @@
     "confirmNewPassword": "Confirmer le nouveau mot de passe",
     "resetPassword": "Réinitialiser le mot de passe",
     "signOut": "Déconnexion",
-    "signingOut": "Déconnexion…"
+    "signingOut": "Déconnexion…",
+    "profile": "Profil"
   },
   "Dashboard": {
     "overview": "Aperçu",
     "properties": "Propriétés",
+    "leads": "Demandes",
+    "contactMessages": "Messages de contact",
+    "saleRequests": "Demandes de vente",
+    "rentalRequests": "Demandes de location",
+    "visitRequests": "Demandes de visite",
     "users": "Utilisateurs",
     "settings": "Paramètres",
     "soon": "Bientôt",
@@ -275,6 +284,91 @@
     "imageHint": "Optionnel - lien vers une image du bien.",
     "description": "Description",
     "genericError": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "DashboardLeads": {
+    "searchPlaceholder": "Rechercher par nom ou email…",
+    "genericError": "Une erreur est survenue.",
+    "noResultsTitle": "Aucune demande trouvée",
+    "noResultsWithSearch": "Essayez une autre recherche.",
+    "noResultsEmpty": "Aucune demande pour le moment.",
+    "name": "Nom",
+    "email": "Email",
+    "type": "Type",
+    "status": "Statut",
+    "submittedOn": "Reçu le",
+    "actions": "Actions",
+    "view": "Voir",
+    "deleting": "Suppression…",
+    "delete": "Supprimer",
+    "confirmDelete": "Supprimer la demande de \"{name}\" ?",
+    "deleteError": "La suppression a échoué.",
+    "contactTitle": "Messages de contact",
+    "contactSubtitle": "Messages envoyés depuis le formulaire de contact.",
+    "sellTitle": "Demandes de vente",
+    "sellSubtitle": "Propriétaires souhaitant vendre un bien.",
+    "rentTitle": "Demandes de location",
+    "rentSubtitle": "Propriétaires souhaitant mettre un bien en location.",
+    "visitTitle": "Demandes de visite",
+    "visitSubtitle": "Visiteurs souhaitant visiter un bien."
+  },
+  "LeadStatus": {
+    "new": "Nouveau",
+    "contacted": "Contacté",
+    "closed": "Clôturé"
+  },
+  "LeadType": {
+    "contact": "Contact",
+    "sell_request": "Vente",
+    "rent_request": "Location",
+    "visit_request": "Visite"
+  },
+  "LeadDetail": {
+    "loading": "Chargement…",
+    "notFound": "Demande introuvable.",
+    "loadError": "Impossible de charger cette demande.",
+    "backToList": "← Retour à la liste",
+    "message": "Message",
+    "noMessage": "Aucun message.",
+    "linkedProperty": "Bien concerné",
+    "viewProperty": "Voir le bien →",
+    "details": "Détails",
+    "phone": "Téléphone",
+    "updateStatus": "Mettre à jour le statut",
+    "statusUpdateError": "La mise à jour du statut a échoué."
+  },
+  "DashboardUsers": {
+    "title": "Utilisateurs",
+    "subtitle": "Gérez les comptes du back-office.",
+    "createUser": "Créer un utilisateur",
+    "genericError": "Une erreur est survenue.",
+    "noResultsTitle": "Aucun utilisateur trouvé",
+    "name": "Nom",
+    "email": "Email",
+    "role": "Rôle",
+    "createdOn": "Créé le",
+    "noRole": "Aucun rôle",
+    "newTitle": "Créer un utilisateur",
+    "newSubtitle": "Créez un compte et attribuez-lui un rôle.",
+    "createSubmit": "Créer l'utilisateur"
+  },
+  "UserForm": {
+    "name": "Nom",
+    "email": "Email",
+    "password": "Mot de passe",
+    "passwordConfirmation": "Confirmer le mot de passe",
+    "role": "Rôle",
+    "loadingRoles": "Chargement des rôles…",
+    "rolesLoadError": "Impossible de charger la liste des rôles.",
+    "genericError": "Une erreur est survenue. Veuillez réessayer."
+  },
+  "Profile": {
+    "title": "Mon profil",
+    "subtitle": "Informations de votre compte.",
+    "name": "Nom",
+    "email": "Email",
+    "role": "Rôle",
+    "noRole": "Aucun rôle",
+    "memberSince": "Membre depuis"
   },
   "Pagination": {
     "previous": "Précédent",

@@ -25,7 +25,10 @@
     "weekdays": "Monday – Friday: 9am – 6pm",
     "saturday": "Saturday: 9am – 1pm",
     "rights": "All rights reserved.",
-    "location": "Marrakech, Morocco"
+    "location": "Marrakech, Morocco",
+    "followUs": "Follow us",
+    "findUs": "Find us",
+    "viewOnMap": "View on Google Maps"
   },
   "Home": {
     "eyebrow": "Marrakech · Premium real estate",
@@ -193,11 +196,17 @@
     "confirmNewPassword": "Confirm new password",
     "resetPassword": "Reset password",
     "signOut": "Sign out",
-    "signingOut": "Signing out…"
+    "signingOut": "Signing out…",
+    "profile": "Profile"
   },
   "Dashboard": {
     "overview": "Overview",
     "properties": "Properties",
+    "leads": "Leads",
+    "contactMessages": "Contact messages",
+    "saleRequests": "Sale requests",
+    "rentalRequests": "Rental requests",
+    "visitRequests": "Visit requests",
     "users": "Users",
     "settings": "Settings",
     "soon": "Soon",
@@ -275,6 +284,91 @@
     "imageHint": "Optional - link to a photo of the property.",
     "description": "Description",
     "genericError": "Something went wrong. Please try again."
+  },
+  "DashboardLeads": {
+    "searchPlaceholder": "Search by name or email…",
+    "genericError": "Something went wrong.",
+    "noResultsTitle": "No requests found",
+    "noResultsWithSearch": "Try a different search.",
+    "noResultsEmpty": "No requests yet.",
+    "name": "Name",
+    "email": "Email",
+    "type": "Type",
+    "status": "Status",
+    "submittedOn": "Received on",
+    "actions": "Actions",
+    "view": "View",
+    "deleting": "Deleting…",
+    "delete": "Delete",
+    "confirmDelete": "Delete the request from \"{name}\"?",
+    "deleteError": "Deletion failed.",
+    "contactTitle": "Contact messages",
+    "contactSubtitle": "Messages sent through the contact form.",
+    "sellTitle": "Sale requests",
+    "sellSubtitle": "Owners looking to sell a property.",
+    "rentTitle": "Rental requests",
+    "rentSubtitle": "Owners looking to rent out a property.",
+    "visitTitle": "Visit requests",
+    "visitSubtitle": "Visitors wanting to view a property."
+  },
+  "LeadStatus": {
+    "new": "New",
+    "contacted": "Contacted",
+    "closed": "Closed"
+  },
+  "LeadType": {
+    "contact": "Contact",
+    "sell_request": "Sale",
+    "rent_request": "Rental",
+    "visit_request": "Visit"
+  },
+  "LeadDetail": {
+    "loading": "Loading…",
+    "notFound": "Request not found.",
+    "loadError": "Couldn't load this request.",
+    "backToList": "← Back to list",
+    "message": "Message",
+    "noMessage": "No message.",
+    "linkedProperty": "Related property",
+    "viewProperty": "View property →",
+    "details": "Details",
+    "phone": "Phone",
+    "updateStatus": "Update status",
+    "statusUpdateError": "Updating the status failed."
+  },
+  "DashboardUsers": {
+    "title": "Users",
+    "subtitle": "Manage back-office accounts.",
+    "createUser": "Create user",
+    "genericError": "Something went wrong.",
+    "noResultsTitle": "No users found",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "createdOn": "Created on",
+    "noRole": "No role",
+    "newTitle": "Create a user",
+    "newSubtitle": "Create an account and assign it a role.",
+    "createSubmit": "Create user"
+  },
+  "UserForm": {
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "passwordConfirmation": "Confirm password",
+    "role": "Role",
+    "loadingRoles": "Loading roles…",
+    "rolesLoadError": "Couldn't load the list of roles.",
+    "genericError": "Something went wrong. Please try again."
+  },
+  "Profile": {
+    "title": "My profile",
+    "subtitle": "Your account information.",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "noRole": "No role",
+    "memberSince": "Member since"
   },
   "Pagination": {
     "previous": "Previous",

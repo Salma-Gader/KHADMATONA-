@@ -2,9 +2,12 @@
 
 use App\Models\User;
 use App\Modules\Property\Domain\Models\Property;
+use Spatie\Permission\Models\Role;
 
 beforeEach(function () {
+    Role::findOrCreate('Admin');
     $this->user = User::factory()->create();
+    $this->user->assignRole('Admin');
 });
 
 test('a guest can list properties', function () {
@@ -138,4 +141,13 @@ test('an authenticated user can delete a property', function () {
 
     $response->assertOk();
     $this->assertSoftDeleted('properties', ['id' => $property->id]);
+});
+
+test('an authenticated user without the Admin role cannot manage properties', function () {
+    $property = Property::factory()->create();
+    $nonAdmin = User::factory()->create();
+
+    $this->actingAs($nonAdmin)->postJson('/api/v1/properties', [])->assertStatus(403);
+    $this->actingAs($nonAdmin)->putJson("/api/v1/properties/{$property->id}", [])->assertStatus(403);
+    $this->actingAs($nonAdmin)->deleteJson("/api/v1/properties/{$property->id}")->assertStatus(403);
 });

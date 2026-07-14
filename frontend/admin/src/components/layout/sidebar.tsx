@@ -52,11 +52,96 @@ function SettingsIcon() {
   );
 }
 
+function MailIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8}>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m4 7 8 6 8-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function TagIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8}>
+      <path
+        d="M11.5 4H6a2 2 0 0 0-2 2v5.5a2 2 0 0 0 .6 1.4l7.5 7.5a2 2 0 0 0 2.8 0l5.5-5.5a2 2 0 0 0 0-2.8L12.9 4.6A2 2 0 0 0 11.5 4Z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="8.2" cy="8.2" r="1.1" />
+    </svg>
+  );
+}
+
+function KeyIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8}>
+      <circle cx="8" cy="15" r="3.5" />
+      <path d="M10.5 12.5 18 5m0 0v3.5M18 5h-3.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CalendarIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8}>
+      <rect x="3.5" y="5" width="17" height="15" rx="2" />
+      <path d="M8 3v4M16 3v4M3.5 10h17" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function CloseIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8}>
       <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
     </svg>
+  );
+}
+
+function renderItem(
+  item: NavItem,
+  pathname: string,
+  onClose: () => void,
+  soonLabel: string,
+) {
+  const active =
+    item.href === "/dashboard" ? pathname === item.href : pathname.startsWith(item.href);
+
+  if (item.comingSoon) {
+    return (
+      <span
+        key={item.href}
+        aria-disabled="true"
+        className="flex items-center justify-between gap-2 rounded-sm px-3 py-2 text-sm text-white/35"
+      >
+        <span className="flex items-center gap-2">
+          {item.icon}
+          {item.label}
+        </span>
+        <span className="rounded-full bg-white/10 px-2 py-0.5 text-[0.6rem] font-bold tracking-wide uppercase">
+          {soonLabel}
+        </span>
+      </span>
+    );
+  }
+
+  return (
+    <Link
+      key={item.href}
+      href={item.href}
+      onClick={onClose}
+      className={clsx(
+        "flex items-center gap-2 rounded-sm px-3 py-2 text-sm font-semibold transition-colors",
+        active
+          ? "bg-gold-primary/18 text-gold-secondary"
+          : "text-white/70 hover:bg-white/5 hover:text-white",
+      )}
+    >
+      {item.icon}
+      {item.label}
+    </Link>
   );
 }
 
@@ -74,7 +159,17 @@ export function Sidebar({
   const items: NavItem[] = [
     { href: "/dashboard", label: t("overview"), icon: <HomeIcon /> },
     { href: "/dashboard/properties", label: t("properties"), icon: <BuildingIcon /> },
-    { href: "/dashboard/users", label: t("users"), icon: <UsersIcon />, comingSoon: true },
+  ];
+
+  const leadItems: NavItem[] = [
+    { href: "/dashboard/leads/contact", label: t("contactMessages"), icon: <MailIcon /> },
+    { href: "/dashboard/leads/sell", label: t("saleRequests"), icon: <TagIcon /> },
+    { href: "/dashboard/leads/rent", label: t("rentalRequests"), icon: <KeyIcon /> },
+    { href: "/dashboard/leads/visit", label: t("visitRequests"), icon: <CalendarIcon /> },
+  ];
+
+  const trailingItems: NavItem[] = [
+    { href: "/dashboard/users", label: t("users"), icon: <UsersIcon /> },
     { href: "/dashboard/settings", label: t("settings"), icon: <SettingsIcon />, comingSoon: true },
   ];
 
@@ -125,45 +220,16 @@ export function Sidebar({
             <CloseIcon />
           </button>
         </div>
-        {items.map((item) => {
-          const active =
-            item.href === "/dashboard"
-              ? pathname === item.href
-              : pathname.startsWith(item.href);
-          if (item.comingSoon) {
-            return (
-              <span
-                key={item.href}
-                aria-disabled="true"
-                className="flex items-center justify-between gap-2 rounded-sm px-3 py-2 text-sm text-white/35"
-              >
-                <span className="flex items-center gap-2">
-                  {item.icon}
-                  {item.label}
-                </span>
-                <span className="rounded-full bg-white/10 px-2 py-0.5 text-[0.6rem] font-bold tracking-wide uppercase">
-                  {t("soon")}
-                </span>
-              </span>
-            );
-          }
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onClose}
-              className={clsx(
-                "flex items-center gap-2 rounded-sm px-3 py-2 text-sm font-semibold transition-colors",
-                active
-                  ? "bg-gold-primary/18 text-gold-secondary"
-                  : "text-white/70 hover:bg-white/5 hover:text-white",
-              )}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
-          );
-        })}
+        {items.map((item) => renderItem(item, pathname, onClose, t("soon")))}
+
+        <p className="mt-3 mb-1 px-3 text-[0.68rem] font-bold tracking-wide text-white/40 uppercase">
+          {t("leads")}
+        </p>
+        {leadItems.map((item) => renderItem(item, pathname, onClose, t("soon")))}
+
+        <div className="mt-3 border-t border-white/10 pt-3">
+          {trailingItems.map((item) => renderItem(item, pathname, onClose, t("soon")))}
+        </div>
       </aside>
     </>
   );

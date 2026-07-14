@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -77,6 +78,14 @@ export function UserMenu() {
           </p>
           <p className="truncate text-xs text-text-muted">{user.email}</p>
         </div>
+        <Link
+          href="/dashboard/profile"
+          role="menuitem"
+          onClick={() => setOpen(false)}
+          className="block w-full px-3.5 py-2.5 text-start text-sm font-semibold text-text transition-colors hover:bg-surface-muted"
+        >
+          {t("profile")}
+        </Link>
         <button
           type="button"
           role="menuitem"

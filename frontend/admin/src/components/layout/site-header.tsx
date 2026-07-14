@@ -157,10 +157,11 @@ export function SiteHeader() {
         aria-modal="true"
         aria-label={t("mobileMenu")}
         className={clsx(
-          "fixed inset-y-0 end-0 z-50 flex w-72 max-w-[85vw] flex-col gap-1 bg-ink p-5 text-white shadow-2xl",
+          "fixed inset-y-0 end-0 z-50 flex w-72 max-w-[85vw] flex-col gap-1 bg-[#111111] p-5 text-white shadow-2xl",
           "transition-transform duration-300 ease-in-out lg:hidden",
           open ? "translate-x-0" : "translate-x-full rtl:-translate-x-full",
         )}
+        style={{ backgroundColor: "#111111" }}
       >
         <div className="mb-4 flex items-center justify-between">
           <span className="font-display text-lg font-semibold text-white">{t("menu")}</span>
@@ -192,16 +193,7 @@ export function SiteHeader() {
               </Link>
             );
           })}
-          {isAdmin && (
-            <Link
-              href="/dashboard"
-              onClick={() => setOpen(false)}
-              className="mt-2 flex items-center gap-2 rounded-sm border border-white/15 px-3 py-2.5 text-sm font-semibold text-white/90 transition-colors hover:border-gold-secondary hover:text-gold-secondary"
-            >
-              <ShieldIcon />
-              {t("administration")}
-            </Link>
-          )}
+
         </nav>
         <div className="mt-3">
           <LocaleSwitcher variant="onDark" className="w-full justify-center" />
