@@ -51,10 +51,10 @@ export function PropertyCard({ property }: { property: Property }) {
       className="group flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
     >
       <div className="relative h-44 overflow-hidden bg-gradient-to-br from-charcoal to-ink">
-        {property.image && (
-          // eslint-disable-next-line @next/next/no-img-element -- external, per-property demo image URL
+        {property.cover_image && (
+          // eslint-disable-next-line @next/next/no-img-element -- media-library-served thumbnail
           <img
-            src={property.image}
+            src={property.cover_image}
             alt={property.title}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
@@ -72,7 +72,7 @@ export function PropertyCard({ property }: { property: Property }) {
         <p className="mt-1 truncate font-bold text-text">{property.title}</p>
         <p className="mt-1 flex items-center gap-1.5 text-[0.82rem] text-text-muted">
           <LocationIcon />
-          {property.city}
+          {property.city_name}
         </p>
 
         <div className="mt-4 flex items-center gap-4 border-t border-border pt-4 text-[0.8rem] text-text-muted">

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Property\Database\Factories;
 
+use App\Core\Lookup\Domain\Models\City;
 use App\Modules\Property\Domain\Enums\PropertyStatus;
 use App\Modules\Property\Domain\Enums\PropertyType;
 use App\Modules\Property\Domain\Models\Property;
@@ -98,6 +99,25 @@ class PropertyFactory extends Factory
     ];
 
     /**
+     * Resolves a city name to a real City::id, reusing a matching seeded
+     * city if one exists or creating it otherwise. Deliberately queries
+     * fresh every call rather than caching across calls in a static
+     * property - Pest/RefreshDatabase resets the database between tests
+     * within the same PHP process, so a static cache would go stale and
+     * point at rows a later test never created.
+     */
+    private static function cityId(string $name): int
+    {
+        $city = City::query()
+            ->whereHas('translations', function ($query) use ($name) {
+                $query->where('locale', 'fr')->where('field', 'name')->where('value', $name);
+            })
+            ->first();
+
+        return $city?->id ?? City::factory()->withName($name)->create()->id;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function definition(): array
@@ -122,14 +142,29 @@ class PropertyFactory extends Factory
             'title' => $title,
             'type' => $type,
             'status' => fake()->randomElement(PropertyStatus::cases()),
-            'city' => $city,
+            'city_id' => self::cityId($city),
             'address' => fake()->streetAddress(),
             'price' => fake()->numberBetween(300_000, 8_000_000) * 100,
             'surface' => $surface,
             'bedrooms' => $bedrooms,
             'bathrooms' => fake()->numberBetween(1, max(1, min($bedrooms, 4))),
             'description' => $description,
-            'image' => fake()->randomElement(self::IMAGES[$type->value]).'?w=1200&h=800&fit=crop&q=80',
         ];
+    }
+
+    /**
+     * A real gallery photo, fetched over the network - deliberately NOT
+     * wired in automatically via configure()/afterCreating(), since this
+     * factory backs ~20 Property::factory() calls across the test suite
+     * and a network fetch on every one of them would make tests slow and
+     * dependent on outbound connectivity. Call this explicitly only where
+     * a real-looking photo actually matters (PropertySeeder's demo data).
+     */
+    public function withGalleryPhoto(): static
+    {
+        return $this->afterCreating(function (Property $property) {
+            $image = fake()->randomElement(self::IMAGES[$property->type->value]).'?w=1200&h=800&fit=crop&q=80';
+            $property->addMediaFromUrl($image)->toMediaCollection('gallery');
+        });
     }
 }

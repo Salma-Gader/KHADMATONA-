@@ -2,6 +2,7 @@
 
 use App\Core\Auth\CoreAuthServiceProvider;
 use App\Core\Localization\CoreLocalizationServiceProvider;
+use App\Core\Lookup\CoreLookupServiceProvider;
 use App\Core\Permissions\CorePermissionsServiceProvider;
 use App\Modules\Lead\LeadServiceProvider;
 use App\Modules\Lookup\LookupServiceProvider;
@@ -15,6 +16,7 @@ return [
     // Core (cross-cutting, shared by every module)
     CoreAuthServiceProvider::class,
     CoreLocalizationServiceProvider::class,
+    CoreLookupServiceProvider::class,
     CorePermissionsServiceProvider::class,
 
     // MVP business modules

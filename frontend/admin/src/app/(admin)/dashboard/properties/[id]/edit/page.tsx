@@ -69,15 +69,17 @@ export default function EditPropertyPage({
             title: property.title,
             type: property.type,
             status: property.status,
-            city: property.city,
+            city_id: property.city_id,
+            district_id: property.district_id ?? "",
             address: property.address,
             price: property.price,
             surface: property.surface,
             bedrooms: property.bedrooms,
             bathrooms: property.bathrooms,
             description: property.description ?? "",
-            image: property.image ?? "",
           }}
+          existingImages={property.images}
+          propertyId={property.id}
           submitLabel={t("editSubmit")}
           onSubmit={handleSubmit}
         />

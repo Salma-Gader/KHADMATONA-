@@ -41,7 +41,7 @@ export async function generateMetadata({
 
   return {
     title: property.title,
-    description: `${propertyType(property.type)} à ${property.city} — ${property.surface} m², ${property.bedrooms} chambres.`,
+    description: `${propertyType(property.type)} à ${property.city_name} — ${property.surface} m², ${property.bedrooms} chambres.`,
   };
 }
 
@@ -84,17 +84,32 @@ function PropertyDetailContent({ property }: { property: Awaited<ReturnType<type
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <div className="aspect-video overflow-hidden rounded-lg bg-surface-muted">
-            {property.image ? (
-              // eslint-disable-next-line @next/next/no-img-element -- external, per-property demo image URL
-              <img
-                src={property.image}
-                alt={property.title}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center text-text-muted">
-                {t("noImage")}
+          <div>
+            <div className="aspect-video overflow-hidden rounded-lg bg-surface-muted">
+              {property.cover_image ? (
+                // eslint-disable-next-line @next/next/no-img-element -- media-library-served image
+                <img
+                  src={property.cover_image}
+                  alt={property.title}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-text-muted">
+                  {t("noImage")}
+                </div>
+              )}
+            </div>
+            {property.images.length > 1 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {property.images.map((image) => (
+                  // eslint-disable-next-line @next/next/no-img-element -- media-library-served thumbnail
+                  <img
+                    key={image.id}
+                    src={image.url}
+                    alt=""
+                    className="h-16 w-16 rounded-md object-cover"
+                  />
+                ))}
               </div>
             )}
           </div>
@@ -107,7 +122,14 @@ function PropertyDetailContent({ property }: { property: Awaited<ReturnType<type
               <Spec label={t("bedrooms")} value={String(property.bedrooms)} />
               <Spec label={t("bathrooms")} value={String(property.bathrooms)} />
               <Spec label={t("surface")} value={`${property.surface} m²`} />
-              <Spec label={t("city")} value={property.city} />
+              <Spec
+                label={t("city")}
+                value={
+                  property.district_name
+                    ? `${property.district_name}, ${property.city_name}`
+                    : (property.city_name ?? "—")
+                }
+              />
             </dl>
           </Card>
 
@@ -133,7 +155,7 @@ function PropertyDetailContent({ property }: { property: Awaited<ReturnType<type
               {t("visitRequestTitle")}
             </h2>
             <p className="mt-1 mb-5 text-[0.85rem] text-text-muted">
-              {property.title} — {property.city}
+              {property.title} — {property.city_name}
             </p>
             <LeadForm
               type="visit_request"

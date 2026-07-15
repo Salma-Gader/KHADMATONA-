@@ -94,17 +94,32 @@ export default function PropertyDetailPage({
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <div className="mb-5 aspect-video overflow-hidden rounded-md bg-surface-muted">
-            {property.image ? (
-              // eslint-disable-next-line @next/next/no-img-element -- external, arbitrary demo image URL
-              <img
-                src={property.image}
-                alt={property.title}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center text-sm text-text-muted">
-                {propertyDetail("noImage")}
+          <div className="mb-5">
+            <div className="aspect-video overflow-hidden rounded-md bg-surface-muted">
+              {property.cover_image ? (
+                // eslint-disable-next-line @next/next/no-img-element -- media-library-served image
+                <img
+                  src={property.cover_image}
+                  alt={property.title}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center text-sm text-text-muted">
+                  {propertyDetail("noImage")}
+                </div>
+              )}
+            </div>
+            {property.images.length > 1 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {property.images.map((image) => (
+                  // eslint-disable-next-line @next/next/no-img-element -- media-library-served thumbnail
+                  <img
+                    key={image.id}
+                    src={image.url}
+                    alt=""
+                    className="h-16 w-16 rounded-md object-cover"
+                  />
+                ))}
               </div>
             )}
           </div>
@@ -122,7 +137,14 @@ export default function PropertyDetailPage({
           </p>
           <dl className="flex flex-col gap-3 text-sm">
             <Row label={t("price")} value={`${currencyFormatter.format(property.price)} MAD`} />
-            <Row label={t("city")} value={property.city} />
+            <Row
+              label={t("city")}
+              value={
+                property.district_name
+                  ? `${property.district_name}, ${property.city_name}`
+                  : (property.city_name ?? "—")
+              }
+            />
             <Row label={t("address")} value={property.address} />
             <Row label={t("surface")} value={`${property.surface} m²`} />
             <Row label={t("bedrooms")} value={String(property.bedrooms)} />

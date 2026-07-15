@@ -145,7 +145,7 @@ export default function PropertiesListPage() {
                     {property.title}
                   </TableCell>
                   <TableCell>{propertyType(property.type)}</TableCell>
-                  <TableCell>{property.city}</TableCell>
+                  <TableCell>{property.city_name}</TableCell>
                   <TableCell>
                     <PropertyStatusBadge status={property.status} />
                   </TableCell>

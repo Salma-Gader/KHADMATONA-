@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Property\Http\Controllers\PropertyController;
+use App\Modules\Property\Http\Controllers\PropertyStatsController;
 use Illuminate\Support\Facades\Route;
 
 // Public showcase site: unauthenticated listing/detail reads.
@@ -13,4 +14,6 @@ Route::middleware('throttle:public-read')->group(function () {
 // these.
 Route::middleware(['auth:sanctum', 'role:Admin'])->group(function () {
     Route::apiResource('properties', PropertyController::class)->except(['index', 'show']);
+    Route::delete('/properties/{property}/images/{media}', [PropertyController::class, 'destroyImage']);
+    Route::get('/dashboard/stats', PropertyStatsController::class);
 });

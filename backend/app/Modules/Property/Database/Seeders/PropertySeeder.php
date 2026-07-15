@@ -13,6 +13,6 @@ class PropertySeeder extends Seeder
             return;
         }
 
-        Property::factory()->count(20)->create();
+        Property::factory()->count(20)->withGalleryPhoto()->create();
     }
 }

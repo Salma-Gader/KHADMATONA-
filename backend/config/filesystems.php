@@ -50,7 +50,9 @@ return [
         // Backs the Core Media module (Spatie Media Library): one disk,
         // reused by Property galleries now and Artisan portfolios /
         // verification documents / contract attachments later. Served
-        // through the existing "public" storage symlink.
+        // through the existing "public" storage symlink. Kept as a local
+        // fallback/dev option - production media storage is the
+        // 'cloudinary' disk below (see MEDIA_DISK in .env).
         'media' => [
             'driver' => 'local',
             'root' => storage_path('app/public/media'),
@@ -58,6 +60,21 @@ return [
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
+        ],
+
+        // Cloudinary-backed Media Library storage (cloudinary-labs/cloudinary-laravel).
+        // URL generation deliberately does NOT rely on this driver's own
+        // getUrl() (it makes a live Admin API call per invocation, which
+        // would mean N Cloudinary API round-trips per property list
+        // response) - see App\Core\Media\CloudinaryUrlGenerator, wired in
+        // via config/media-library.php's `url_generator`, which builds
+        // delivery URLs locally from the public_id instead.
+        'cloudinary' => [
+            'driver' => 'cloudinary',
+            'cloud' => env('CLOUDINARY_CLOUD_NAME'),
+            'key' => env('CLOUDINARY_API_KEY'),
+            'secret' => env('CLOUDINARY_API_SECRET'),
+            'secure' => true,
         ],
 
         's3' => [

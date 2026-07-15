@@ -1,5 +1,6 @@
 <?php
 
+use App\Core\Lookup\Domain\Models\City;
 use App\Models\User;
 use App\Modules\Property\Domain\Models\Property;
 use Spatie\Permission\Models\Role;
@@ -8,6 +9,8 @@ beforeEach(function () {
     Role::findOrCreate('Admin');
     $this->user = User::factory()->create();
     $this->user->assignRole('Admin');
+    $this->marrakech = City::factory()->withName('Marrakech')->create();
+    $this->rabat = City::factory()->withName('Rabat')->create();
 });
 
 test('a guest can list properties', function () {
@@ -57,9 +60,9 @@ test('properties can be filtered by price range', function () {
         ->assertJsonPath('data.0.title', 'Bien abordable');
 });
 
-test('properties can be searched by title or city', function () {
-    Property::factory()->create(['title' => 'Villa unique à Essaouira', 'city' => 'Essaouira']);
-    Property::factory()->create(['title' => 'Appartement à Rabat', 'city' => 'Rabat']);
+test('properties can be searched by title', function () {
+    Property::factory()->create(['title' => 'Villa unique à Essaouira']);
+    Property::factory()->create(['title' => 'Appartement à Rabat']);
 
     $response = $this->getJson('/api/v1/properties?filter[search]=Essaouira');
 
@@ -67,14 +70,14 @@ test('properties can be searched by title or city', function () {
 });
 
 test('properties can be filtered by an exact city', function () {
-    Property::factory()->create(['city' => 'Essaouira']);
-    Property::factory()->create(['city' => 'Rabat']);
+    Property::factory()->create(['city_id' => $this->rabat->id]);
+    Property::factory()->create(['city_id' => $this->marrakech->id]);
 
-    $response = $this->getJson('/api/v1/properties?filter[city]=Rabat');
+    $response = $this->getJson("/api/v1/properties?filter[city_id]={$this->rabat->id}");
 
     $response->assertOk()
         ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.city', 'Rabat');
+        ->assertJsonPath('data.0.city_id', $this->rabat->id);
 });
 
 test('an authenticated user can create a property', function () {
@@ -82,7 +85,7 @@ test('an authenticated user can create a property', function () {
         'title' => 'Villa avec piscine à Marrakech',
         'type' => 'villa',
         'status' => 'disponible',
-        'city' => 'Marrakech',
+        'city_id' => $this->marrakech->id,
         'address' => 'Route de l\'Ourika',
         'price' => 3_500_000,
         'surface' => 320,
@@ -95,18 +98,34 @@ test('an authenticated user can create a property', function () {
 
     $response->assertCreated()
         ->assertJsonPath('data.title', $payload['title'])
-        ->assertJsonPath('data.price', 3_500_000);
+        ->assertJsonPath('data.price', 3_500_000)
+        ->assertJsonPath('data.city_id', $this->marrakech->id)
+        ->assertJsonPath('data.city_name', 'Marrakech');
 
     $this->assertDatabaseHas('properties', [
         'title' => $payload['title'],
         'price' => 350_000_000, // stored as cents
+        'city_id' => $this->marrakech->id,
     ]);
 });
 
 test('creating a property requires the mandatory fields', function () {
     $response = $this->actingAs($this->user)->postJson('/api/v1/properties', []);
 
-    $response->assertStatus(422)->assertJsonValidationErrors(['title', 'type', 'city', 'address', 'price', 'surface']);
+    $response->assertStatus(422)->assertJsonValidationErrors(['title', 'type', 'city_id', 'address', 'price', 'surface']);
+});
+
+test('creating a property rejects an unknown city_id', function () {
+    $response = $this->actingAs($this->user)->postJson('/api/v1/properties', [
+        'title' => 'Test',
+        'type' => 'villa',
+        'city_id' => 999_999,
+        'address' => 'Test',
+        'price' => 1_000_000,
+        'surface' => 100,
+    ]);
+
+    $response->assertStatus(422)->assertJsonValidationErrors(['city_id']);
 });
 
 test('an authenticated user can view a single property', function () {
@@ -124,7 +143,7 @@ test('an authenticated user can update a property', function () {
         'title' => $property->title,
         'type' => $property->type->value,
         'status' => 'vendu',
-        'city' => $property->city,
+        'city_id' => $property->city_id,
         'address' => $property->address,
         'price' => 1_000_000,
         'surface' => $property->surface,

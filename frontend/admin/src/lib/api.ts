@@ -116,7 +116,11 @@ async function requestEnvelope<T>(
 
   const headers = new Headers(options.headers);
   headers.set("Accept", "application/json");
-  if (options.body) headers.set("Content-Type", "application/json");
+  // FormData bodies must NOT get an explicit Content-Type - the browser
+  // sets the multipart boundary itself when it's left unset.
+  if (options.body && !(options.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
   if (isMutating) {
     const token = readCookie("XSRF-TOKEN");
     if (token) headers.set("X-XSRF-TOKEN", token);
@@ -187,4 +191,16 @@ export const api = {
       body: body !== undefined ? JSON.stringify(body) : undefined,
     }),
   delete: <T,>(path: string) => request<T>(path, { method: "DELETE" }),
+  /** For multipart/form-data bodies (file uploads) - never JSON-encoded. */
+  postForm: <T,>(path: string, body: FormData) =>
+    request<T>(path, { method: "POST", body }),
+  /**
+   * PHP doesn't parse multipart bodies on PUT, so this sends POST with a
+   * spoofed `_method=PUT` field instead - Laravel's method-spoofing
+   * middleware is already active app-wide, no backend change needed.
+   */
+  putForm: <T,>(path: string, body: FormData) => {
+    body.append("_method", "PUT");
+    return request<T>(path, { method: "POST", body });
+  },
 };

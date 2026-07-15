@@ -7,10 +7,9 @@ interface DonutSegment {
 const RADIUS = 40;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-/** Presentational only - see fake-bar-chart.tsx for the same rationale. */
-export function FakeDonutChart({ data }: { data: DonutSegment[] }) {
+export function DonutChart({ data }: { data: DonutSegment[] }) {
   const total = data.reduce((sum, d) => sum + d.value, 0);
-  const segmentLength = (value: number) => (value / total) * CIRCUMFERENCE;
+  const segmentLength = (value: number) => (total === 0 ? 0 : (value / total) * CIRCUMFERENCE);
   const segments = data.map((segment, index) => {
     const cumulative = data
       .slice(0, index)
@@ -58,7 +57,7 @@ export function FakeDonutChart({ data }: { data: DonutSegment[] }) {
             />
             <span className="text-text-muted">{segment.label}</span>
             <span className="font-mono tabular-nums text-text">
-              {Math.round((segment.value / total) * 100)}%
+              {total === 0 ? 0 : Math.round((segment.value / total) * 100)}%
             </span>
           </li>
         ))}

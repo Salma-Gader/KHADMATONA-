@@ -4,11 +4,11 @@ interface BarDatum {
 }
 
 /**
- * Presentational only - values are illustrative, not computed from real
- * data (see dashboard/page.tsx). Hand-rolled SVG rather than a charting
- * dependency: the data is static, so a library buys nothing here.
+ * Hand-rolled SVG-free bar rendering rather than a charting dependency -
+ * the data set is small (a handful of months), so a library buys nothing
+ * here.
  */
-export function FakeBarChart({ data }: { data: BarDatum[] }) {
+export function BarChart({ data }: { data: BarDatum[] }) {
   const max = Math.max(...data.map((d) => d.value), 1);
 
   return (
