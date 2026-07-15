@@ -20,6 +20,7 @@ function filtersFromSearchParams(params: URLSearchParams): PropertyFiltersValue 
     search: params.get("search") ?? "",
     type: (params.get("type") as PropertyFiltersValue["type"]) ?? "",
     status: (params.get("status") as PropertyFiltersValue["status"]) ?? "",
+    cityId: params.get("city_id") ?? "",
     priceMin: params.get("price_min") ?? "",
     priceMax: params.get("price_max") ?? "",
   };
@@ -53,6 +54,7 @@ export function PropertiesList() {
           search: filters.search || undefined,
           type: filters.type || undefined,
           status: filters.status || undefined,
+          cityId: filters.cityId ? Number(filters.cityId) : undefined,
           priceMin: filters.priceMin ? Number(filters.priceMin) : undefined,
           priceMax: filters.priceMax ? Number(filters.priceMax) : undefined,
         });
@@ -84,6 +86,7 @@ export function PropertiesList() {
     if (next.search) query.set("search", next.search);
     if (next.type) query.set("type", next.type);
     if (next.status) query.set("status", next.status);
+    if (next.cityId) query.set("city_id", next.cityId);
     if (next.priceMin) query.set("price_min", next.priceMin);
     if (next.priceMax) query.set("price_max", next.priceMax);
     router.replace(query.toString() ? `/properties?${query.toString()}` : "/properties");
@@ -102,7 +105,7 @@ export function PropertiesList() {
           ))}
         </div>
       ) : properties.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 rounded-lg border border-dashed border-border-strong bg-surface-muted p-12 text-center">
+        <div className="flex flex-col items-center gap-4 rounded-md border border-dashed border-border-strong bg-surface-muted p-12 text-center">
           <h3 className="font-display text-xl font-semibold text-text">
             {t("noResultsTitle")}
           </h3>

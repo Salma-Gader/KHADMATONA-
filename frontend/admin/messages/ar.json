@@ -33,11 +33,15 @@
   "Home": {
     "eyebrow": "مراكش · عقارات فاخرة",
     "heroTitle": "اعثر على العقار الذي يناسبك",
+    "heroTitleBefore": "اعثر على",
+    "heroTitleAccent": "العقار",
+    "heroTitleAfter": "الذي يناسبك",
     "heroSubtitle": "تختار مجموعة خدماتنا وتعرض عقارات استثنائية في مراكش — فيلات، رياضات، شقق — وترافقكم في كل زيارة أو بيع أو كراء.",
     "featuredTitle": "عقارات مميزة",
     "featuredSubtitle": "مجموعة مختارة من أحدث إعلاناتنا.",
     "seeAllProperties": "عرض جميع العقارات ←",
     "noPropertiesYet": "لا توجد عقارات متاحة حاليًا.",
+    "browseByTypeTitle": "تصفح حسب نوع العقار",
     "pillarsTitle": "ما يميز خدماتنا",
     "pillar1Title": "اختيار موثوق",
     "pillar1Description": "يتم التحقق من كل عقار قبل نشره: وثائق الملكية، معلومات دقيقة، وصور مطابقة للواقع.",
@@ -86,6 +90,14 @@
     "resetFilters": "إعادة تعيين",
     "heroSearchPlaceholder": "مدينة، حي، عنوان…",
     "searchAriaLabel": "البحث عن عقار",
+    "location": "الموقع",
+    "allLocations": "كل المدن",
+    "priceRange": "الميزانية",
+    "anyPrice": "كل الميزانيات",
+    "priceRangeUnder1M": "أقل من 1,000,000 درهم",
+    "priceRange1MTo3M": "1,000,000 – 3,000,000 درهم",
+    "priceRange3MTo6M": "3,000,000 – 6,000,000 درهم",
+    "priceRangeOver6M": "6,000,000 درهم فأكثر",
     "totalCount": "{count} عقار إجمالاً"
   },
   "PropertyDetail": {
@@ -266,7 +278,12 @@
     "loadError": "تعذر تحميل هذا العقار.",
     "backToList": "→ العودة إلى القائمة",
     "details": "التفاصيل",
-    "addedOnLabel": "أُضيف بتاريخ"
+    "addedOnLabel": "أُضيف بتاريخ",
+    "price": "السعر",
+    "address": "العنوان",
+    "surface": "المساحة",
+    "bedrooms": "غرف النوم",
+    "bathrooms": "الحمامات"
   },
   "PropertyForm": {
     "title": "العنوان",

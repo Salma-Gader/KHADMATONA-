@@ -51,13 +51,13 @@ export default function ContactPage() {
 
       <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-3">
         <Reveal className="lg:col-span-2">
-          <Card>
+          <Card radius="md">
             <LeadForm type="contact" submitLabel={leads("sendMessage")} />
           </Card>
         </Reveal>
 
         <Reveal>
-          <Card className="flex flex-col gap-5">
+          <Card radius="md" className="flex flex-col gap-5">
             <div className="flex items-start gap-3">
               <PinIcon />
               <div>

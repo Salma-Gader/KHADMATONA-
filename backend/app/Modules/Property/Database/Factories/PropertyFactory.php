@@ -167,4 +167,23 @@ class PropertyFactory extends Factory
             $property->addMediaFromUrl($image)->toMediaCollection('gallery');
         });
     }
+
+    /**
+     * Same real-photo sourcing as withGalleryPhoto(), but attaches several
+     * distinct images from the property's type pool instead of one - for
+     * demo data that needs a genuine multi-photo gallery to browse. Capped
+     * at the pool size for that type (e.g. 'terrain' only has one curated
+     * photo), since repeating the exact same image isn't a real gallery.
+     */
+    public function withGalleryPhotos(int $count = 3): static
+    {
+        return $this->afterCreating(function (Property $property) use ($count) {
+            $pool = self::IMAGES[$property->type->value];
+            $images = collect($pool)->shuffle()->take($count);
+
+            foreach ($images as $image) {
+                $property->addMediaFromUrl($image.'?w=1200&h=800&fit=crop&q=80')->toMediaCollection('gallery');
+            }
+        });
+    }
 }

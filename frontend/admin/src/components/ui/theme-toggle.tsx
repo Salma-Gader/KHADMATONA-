@@ -32,9 +32,12 @@ function MoonIcon() {
 export function ThemeToggle({
   variant = "default",
 }: {
-  /** "onDark" for permanently-dark chrome (e.g. the public navbar) where
-   * the theme-token-based default colors wouldn't have enough contrast. */
-  variant?: "default" | "onDark";
+  /** "onDark"/"onLight" are for permanently-fixed chrome (e.g. the public
+   * navbar) where theme-token-based default colors wouldn't have enough
+   * contrast - these use the raw invariant brand colors instead of the
+   * data-theme-reactive semantic tokens, so they stay correct even when
+   * the page itself is toggled to the opposite theme. */
+  variant?: "default" | "onDark" | "onLight";
 }) {
   const t = useTranslations("Theme");
   // Starts null (server-rendered default) - the inline no-flash script in
@@ -64,9 +67,9 @@ export function ThemeToggle({
       aria-label={isDark ? t("toggleToLight") : t("toggleToDark")}
       className={clsx(
         "flex h-9 w-9 shrink-0 items-center justify-center rounded-md transition-colors",
-        variant === "onDark"
-          ? "text-white/70 hover:bg-white/10 hover:text-white"
-          : "text-text-muted hover:bg-surface-muted hover:text-text",
+        variant === "onDark" && "text-white/70 hover:bg-white/10 hover:text-white",
+        variant === "onLight" && "text-charcoal/70 hover:bg-mist hover:text-ink",
+        variant === "default" && "text-text-muted hover:bg-surface-muted hover:text-text",
       )}
     >
       {isDark ? <SunIcon /> : <MoonIcon />}

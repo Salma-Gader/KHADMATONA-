@@ -10,7 +10,7 @@ export function SellRentSection() {
   const [mode, setMode] = useState<"sell_request" | "rent_request">("sell_request");
 
   return (
-    <div className="mx-auto max-w-xl rounded-lg border border-border bg-surface p-6 shadow-md sm:p-8">
+    <div className="mx-auto max-w-xl rounded-md border border-border bg-surface p-6 shadow-md sm:p-8">
       <div className="mb-6 flex gap-2 rounded-md bg-surface-muted p-1">
         <button
           type="button"

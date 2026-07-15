@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { LeadForm } from "@/components/leads/lead-form";
+import { PropertyGallery } from "@/components/properties/property-gallery";
 import { PropertyStatusBadge } from "@/components/properties/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -84,37 +85,13 @@ function PropertyDetailContent({ property }: { property: Awaited<ReturnType<type
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <div>
-            <div className="aspect-video overflow-hidden rounded-lg bg-surface-muted">
-              {property.cover_image ? (
-                // eslint-disable-next-line @next/next/no-img-element -- media-library-served image
-                <img
-                  src={property.cover_image}
-                  alt={property.title}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center text-text-muted">
-                  {t("noImage")}
-                </div>
-              )}
-            </div>
-            {property.images.length > 1 && (
-              <div className="mt-2 flex flex-wrap gap-2">
-                {property.images.map((image) => (
-                  // eslint-disable-next-line @next/next/no-img-element -- media-library-served thumbnail
-                  <img
-                    key={image.id}
-                    src={image.url}
-                    alt=""
-                    className="h-16 w-16 rounded-md object-cover"
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+          <PropertyGallery
+            images={property.images}
+            title={property.title}
+            noImageLabel={t("noImage")}
+          />
 
-          <Card>
+          <Card radius="md">
             <p className="mb-4 text-[0.7rem] font-bold tracking-wide text-text-muted uppercase">
               {t("features")}
             </p>
@@ -133,7 +110,7 @@ function PropertyDetailContent({ property }: { property: Awaited<ReturnType<type
             </dl>
           </Card>
 
-          <Card>
+          <Card radius="md">
             <p className="mb-2 text-[0.7rem] font-bold tracking-wide text-text-muted uppercase">
               {t("description")}
             </p>
@@ -150,7 +127,7 @@ function PropertyDetailContent({ property }: { property: Awaited<ReturnType<type
         </div>
 
         <div className="lg:sticky lg:top-24 lg:self-start">
-          <Card>
+          <Card radius="md">
             <h2 className="font-display text-xl font-semibold text-text">
               {t("visitRequestTitle")}
             </h2>

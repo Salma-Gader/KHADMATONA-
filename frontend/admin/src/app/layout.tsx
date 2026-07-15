@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
-import { Cormorant, IBM_Plex_Mono, IBM_Plex_Sans_Arabic, Manrope } from "next/font/google";
+import { IBM_Plex_Mono, IBM_Plex_Sans_Arabic, Manrope, Poppins } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { AuthProvider } from "@/lib/auth-context";
 import "./globals.css";
 
-const cormorant = Cormorant({
-  variable: "--font-cormorant",
+// Bold, geometric headline face matching the reference brand look -
+// replaces the previous serif display face. Weights cover the site's
+// existing font-semibold (600) heading usage plus headroom for a bolder
+// hero if needed later.
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["600", "700", "800"],
 });
 
 const manrope = Manrope({
@@ -72,7 +76,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={dir}
-      className={`${cormorant.variable} ${manrope.variable} ${ibmPlexMono.variable} ${ibmPlexSansArabic.variable} h-full antialiased`}
+      className={`${poppins.variable} ${manrope.variable} ${ibmPlexMono.variable} ${ibmPlexSansArabic.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

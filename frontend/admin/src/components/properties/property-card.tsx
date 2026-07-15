@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import clsx from "clsx";
+import { CARD_INTERACTIVE_CLASSES } from "@/components/ui/card";
 import { PropertyStatusBadge } from "@/components/properties/status-badge";
 import type { Property } from "@/types/property";
 
@@ -48,15 +50,18 @@ export function PropertyCard({ property }: { property: Property }) {
   return (
     <Link
       href={`/properties/${property.id}`}
-      className="group flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+      className={clsx(
+        "group flex flex-col overflow-hidden rounded-md border border-border bg-surface shadow-sm",
+        CARD_INTERACTIVE_CLASSES,
+      )}
     >
-      <div className="relative h-44 overflow-hidden bg-gradient-to-br from-charcoal to-ink">
+      <div className="relative h-56 overflow-hidden bg-gradient-to-br from-charcoal to-ink">
         {property.cover_image && (
           // eslint-disable-next-line @next/next/no-img-element -- media-library-served thumbnail
           <img
             src={property.cover_image}
             alt={property.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         )}
         <div className="absolute top-3 start-3">
@@ -64,18 +69,18 @@ export function PropertyCard({ property }: { property: Property }) {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
-        <div className="font-mono text-[1.35rem] font-semibold tabular-nums text-text" dir="ltr">
+      <div className="flex flex-1 flex-col gap-1.5 p-6">
+        <div className="font-mono text-xl font-bold tabular-nums text-gold-primary" dir="ltr">
           {currencyFormatter.format(property.price)}{" "}
-          <span className="text-[0.7rem] font-semibold text-text-muted">MAD</span>
+          <span className="text-[0.68rem] font-semibold text-text-muted">MAD</span>
         </div>
-        <p className="mt-1 truncate font-bold text-text">{property.title}</p>
-        <p className="mt-1 flex items-center gap-1.5 text-[0.82rem] text-text-muted">
+        <p className="truncate font-display text-lg font-semibold text-text">{property.title}</p>
+        <p className="flex items-center gap-1.5 text-[0.82rem] text-text-muted">
           <LocationIcon />
           {property.city_name}
         </p>
 
-        <div className="mt-4 flex items-center gap-4 border-t border-border pt-4 text-[0.8rem] text-text-muted">
+        <div className="mt-3 flex items-center gap-4 text-[0.8rem] text-text-muted">
           <span className="flex items-center gap-1.5">
             <BedIcon />
             {property.bedrooms}
@@ -88,7 +93,7 @@ export function PropertyCard({ property }: { property: Property }) {
             <SurfaceIcon />
             {property.surface} m²
           </span>
-          <span className="ms-auto text-[0.72rem] font-semibold text-text-muted uppercase">
+          <span className="ms-auto text-[0.72rem] font-semibold text-gold-primary uppercase">
             {propertyType(property.type)}
           </span>
         </div>

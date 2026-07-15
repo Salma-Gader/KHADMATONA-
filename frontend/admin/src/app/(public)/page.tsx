@@ -2,8 +2,10 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { Hero } from "@/components/home/hero";
+import { PropertyTypeGrid } from "@/components/home/property-type-grid";
 import { SellRentSection } from "@/components/home/sell-rent-section";
 import { PropertyCard } from "@/components/properties/property-card";
+import { ServiceCard } from "@/components/properties/service-card";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
@@ -13,6 +15,37 @@ import { listProperties } from "@/lib/properties";
 // featured listings would never reflect new/updated properties without a
 // full rebuild.
 export const revalidate = 60;
+
+function ShieldCheckIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.7}>
+      <path
+        d="M12 3.5 5 6v5.5c0 4.4 3 7.9 7 9 4-1.1 7-4.6 7-9V6l-7-2.5Z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="m9 12 2.2 2.2L15.5 10" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function HandshakeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.7}>
+      <path d="m3 11 4-3 4 3-2.5 2.5a1.8 1.8 0 0 0 2.5 2.5L15 12l4 3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="m17 8 4 3-5 5-3-1" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ClockIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.7}>
+      <circle cx="12" cy="12" r="8.2" />
+      <path d="M12 7.5V12l3 2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 export async function generateMetadata() {
   const t = await getTranslations("Home");
@@ -29,9 +62,9 @@ function HomeContent({ properties }: { properties: Awaited<ReturnType<typeof lis
   const t = useTranslations("Home");
 
   const pillars = [
-    { title: t("pillar1Title"), description: t("pillar1Description") },
-    { title: t("pillar2Title"), description: t("pillar2Description") },
-    { title: t("pillar3Title"), description: t("pillar3Description") },
+    { title: t("pillar1Title"), description: t("pillar1Description"), icon: <ShieldCheckIcon /> },
+    { title: t("pillar2Title"), description: t("pillar2Description"), icon: <HandshakeIcon /> },
+    { title: t("pillar3Title"), description: t("pillar3Description"), icon: <ClockIcon /> },
   ];
 
   const stats = [
@@ -43,7 +76,13 @@ function HomeContent({ properties }: { properties: Awaited<ReturnType<typeof lis
 
   return (
     <div className="flex flex-col">
-      <Hero eyebrow={t("eyebrow")} title={t("heroTitle")} subtitle={t("heroSubtitle")} />
+      <Hero
+        eyebrow={t("eyebrow")}
+        titleBefore={t("heroTitleBefore")}
+        titleAccent={t("heroTitleAccent")}
+        titleAfter={t("heroTitleAfter")}
+        subtitle={t("heroSubtitle")}
+      />
 
       <section className="px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
@@ -73,6 +112,19 @@ function HomeContent({ properties }: { properties: Awaited<ReturnType<typeof lis
         </div>
       </section>
 
+      <section className="px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <Reveal className="mb-10 text-center">
+            <h2 className="font-display text-3xl font-semibold text-text">
+              {t("browseByTypeTitle")}
+            </h2>
+          </Reveal>
+          <Reveal>
+            <PropertyTypeGrid />
+          </Reveal>
+        </div>
+      </section>
+
       <section className="bg-surface-muted px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <Reveal className="mb-10 text-center">
@@ -81,17 +133,12 @@ function HomeContent({ properties }: { properties: Awaited<ReturnType<typeof lis
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {pillars.map((pillar, index) => (
               <Reveal key={pillar.title} delayMs={index * 100}>
-                <div className="h-full rounded-lg border border-border bg-surface p-6 shadow-sm">
-                  <span className="font-mono text-sm text-gold-primary">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="mt-2 font-display text-xl font-semibold text-text">
-                    {pillar.title}
-                  </h3>
-                  <p className="mt-2 text-[0.92rem] text-text-muted">
-                    {pillar.description}
-                  </p>
-                </div>
+                <ServiceCard
+                  index={index + 1}
+                  icon={pillar.icon}
+                  title={pillar.title}
+                  description={pillar.description}
+                />
               </Reveal>
             ))}
           </div>

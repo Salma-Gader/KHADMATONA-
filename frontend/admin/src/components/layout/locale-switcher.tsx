@@ -18,8 +18,10 @@ export function LocaleSwitcher({
   variant = "default",
 }: {
   className?: string;
-  /** "onDark" for permanently-dark chrome (e.g. the public navbar). */
-  variant?: "default" | "onDark";
+  /** "onDark"/"onLight" are for permanently-fixed chrome (e.g. the public
+   * navbar) - see ThemeToggle's variant doc for why these use fixed brand
+   * colors instead of theme-reactive tokens. */
+  variant?: "default" | "onDark" | "onLight";
 }) {
   const locale = useLocale();
   const router = useRouter();
@@ -40,7 +42,9 @@ export function LocaleSwitcher({
     <div
       className={clsx(
         "flex items-center gap-0.5 rounded-full border p-0.5 text-[0.72rem] font-bold",
-        variant === "onDark" ? "border-white/20" : "border-border-strong",
+        variant === "onDark" && "border-white/20",
+        variant === "onLight" && "border-charcoal/20",
+        variant === "default" && "border-border-strong",
         isPending && "opacity-60",
         className,
       )}
@@ -58,7 +62,9 @@ export function LocaleSwitcher({
               ? "bg-gold-primary text-ink"
               : variant === "onDark"
                 ? "text-white/70 hover:text-white"
-                : "text-text-muted hover:text-text",
+                : variant === "onLight"
+                  ? "text-charcoal/70 hover:text-ink"
+                  : "text-text-muted hover:text-text",
           )}
         >
           {item.label}

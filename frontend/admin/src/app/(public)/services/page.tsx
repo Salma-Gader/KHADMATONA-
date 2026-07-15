@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
+import { ServiceCard } from "@/components/properties/service-card";
 import { Reveal } from "@/components/ui/reveal";
 import { Button } from "@/components/ui/button";
 
@@ -31,22 +32,12 @@ export default function ServicesPage() {
       <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
         {services.map((service, index) => (
           <Reveal key={service.title} delayMs={index * 80}>
-            <div className="h-full rounded-lg border border-border bg-surface p-6 shadow-sm">
-              <span className="font-mono text-sm text-gold-primary">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <h2 className="mt-2 font-display text-xl font-semibold text-text">
-                {service.title}
-              </h2>
-              <p className="mt-2 text-[0.92rem] text-text-muted">
-                {service.description}
-              </p>
-            </div>
+            <ServiceCard index={index + 1} title={service.title} description={service.description} />
           </Reveal>
         ))}
       </div>
 
-      <Reveal className="mt-12 rounded-lg border border-border bg-surface-muted p-8 text-center">
+      <Reveal className="mt-12 rounded-md border border-border bg-surface-muted p-8 text-center">
         <h2 className="font-display text-2xl font-semibold text-text">{t("ctaTitle")}</h2>
         <p className="mx-auto mt-2 max-w-xl text-text-muted">{t("ctaSubtitle")}</p>
         <div className="mt-5 flex flex-wrap justify-center gap-3">

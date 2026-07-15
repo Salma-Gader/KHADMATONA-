@@ -166,7 +166,7 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-gold: var(--shadow-gold);
 
-  --font-display: var(--font-cormorant), Georgia, serif;
+  --font-display: var(--font-poppins), "Segoe UI", sans-serif;
   --font-body: var(--font-manrope), -apple-system, "Segoe UI", sans-serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
   --font-arabic: var(--font-arabic), "Segoe UI", Tahoma, sans-serif;

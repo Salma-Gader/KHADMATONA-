@@ -33,11 +33,15 @@
   "Home": {
     "eyebrow": "Marrakech · Premium real estate",
     "heroTitle": "Find the property that fits you",
+    "heroTitleBefore": "Find the",
+    "heroTitleAccent": "property",
+    "heroTitleAfter": "that fits you",
     "heroSubtitle": "KHADMATONA Group selects and showcases exceptional properties in Marrakech — villas, riads, apartments — and guides you through every visit, sale or rental.",
     "featuredTitle": "Featured properties",
     "featuredSubtitle": "A selection of our latest listings.",
     "seeAllProperties": "See all properties →",
     "noPropertiesYet": "No properties available at the moment.",
+    "browseByTypeTitle": "Browse by property type",
     "pillarsTitle": "What sets KHADMATONA apart",
     "pillar1Title": "Verified selection",
     "pillar1Description": "Every listed property is verified before going live: ownership documents, accurate information, faithful photos.",
@@ -86,6 +90,14 @@
     "resetFilters": "Reset",
     "heroSearchPlaceholder": "A city, a neighborhood, a title…",
     "searchAriaLabel": "Search for a property",
+    "location": "Location",
+    "allLocations": "All cities",
+    "priceRange": "Price range",
+    "anyPrice": "Any price",
+    "priceRangeUnder1M": "Under 1,000,000 MAD",
+    "priceRange1MTo3M": "1,000,000 – 3,000,000 MAD",
+    "priceRange3MTo6M": "3,000,000 – 6,000,000 MAD",
+    "priceRangeOver6M": "6,000,000 MAD and above",
     "totalCount": "{count} propert{count, plural, one {y} other {ies}} in total"
   },
   "PropertyDetail": {
@@ -266,7 +278,12 @@
     "loadError": "Couldn't load this property.",
     "backToList": "← Back to list",
     "details": "Details",
-    "addedOnLabel": "Added on"
+    "addedOnLabel": "Added on",
+    "price": "Price",
+    "address": "Address",
+    "surface": "Surface",
+    "bedrooms": "Bedrooms",
+    "bathrooms": "Bathrooms"
   },
   "PropertyForm": {
     "title": "Title",

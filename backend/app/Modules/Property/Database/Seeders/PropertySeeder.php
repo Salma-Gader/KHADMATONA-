@@ -13,6 +13,10 @@ class PropertySeeder extends Seeder
             return;
         }
 
-        Property::factory()->count(20)->withGalleryPhoto()->create();
+        // Real listings are a mix of single-photo and full-gallery
+        // properties - seed roughly a third with multiple photos so
+        // the gallery UI has genuine demo data, not just cover images.
+        Property::factory()->count(13)->withGalleryPhoto()->create();
+        Property::factory()->count(7)->withGalleryPhotos()->create();
     }
 }

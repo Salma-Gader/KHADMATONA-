@@ -1,20 +1,23 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { listCities } from "@/lib/lookup";
 import {
   PROPERTY_STATUSES,
   PROPERTY_TYPES,
   type PropertyStatus,
   type PropertyType,
 } from "@/types/property";
+import type { City } from "@/types/lookup";
 
 export interface PropertyFiltersValue {
   search: string;
   type: PropertyType | "";
   status: PropertyStatus | "";
+  cityId: string;
   priceMin: string;
   priceMax: string;
 }
@@ -23,6 +26,7 @@ export const EMPTY_PROPERTY_FILTERS: PropertyFiltersValue = {
   search: "",
   type: "",
   status: "",
+  cityId: "",
   priceMin: "",
   priceMax: "",
 };
@@ -38,6 +42,21 @@ export function PropertyFilters({
   const propertyType = useTranslations("PropertyType");
   const propertyStatus = useTranslations("PropertyStatus");
   const [value, setValue] = useState<PropertyFiltersValue>(initialValue);
+  const [cities, setCities] = useState<City[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    listCities()
+      .then((result) => {
+        if (!cancelled) setCities(result);
+      })
+      .catch(() => {
+        // Non-blocking - filtering by city just won't be available if this fails.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -52,9 +71,9 @@ export function PropertyFilters({
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-lg border border-border bg-surface p-4 shadow-sm sm:p-6"
+      className="rounded-md border border-border bg-surface p-4 shadow-sm sm:p-6"
     >
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
         <div className="flex flex-col gap-2 lg:col-span-2">
           <label htmlFor="filter-search" className="text-sm font-bold text-text">
             {t("search")}
@@ -68,6 +87,19 @@ export function PropertyFilters({
             className="w-full min-w-0 rounded-sm border-[1.5px] border-border-strong bg-surface px-3.5 py-2.5 text-[0.95rem] text-text focus-visible:border-gold-primary"
           />
         </div>
+
+        <Select
+          label={t("location")}
+          value={value.cityId}
+          onChange={(event) => setValue((v) => ({ ...v, cityId: event.target.value }))}
+        >
+          <option value="">{t("allLocations")}</option>
+          {cities.map((city) => (
+            <option key={city.id} value={city.id}>
+              {city.name}
+            </option>
+          ))}
+        </Select>
 
         <Select
           label={t("propertyType")}

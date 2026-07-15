@@ -33,11 +33,15 @@
   "Home": {
     "eyebrow": "Marrakech · Immobilier premium",
     "heroTitle": "Trouvez le bien qui vous ressemble",
+    "heroTitleBefore": "Trouvez le",
+    "heroTitleAccent": "bien",
+    "heroTitleAfter": "qui vous ressemble",
     "heroSubtitle": "KHADMATONA Group sélectionne et présente des biens d'exception à Marrakech — villas, riads, appartements — et vous accompagne dans chaque visite, vente ou location.",
     "featuredTitle": "Biens à la une",
     "featuredSubtitle": "Une sélection de nos dernières annonces.",
     "seeAllProperties": "Voir tous les biens →",
     "noPropertiesYet": "Aucun bien disponible pour le moment.",
+    "browseByTypeTitle": "Parcourir par type de bien",
     "pillarsTitle": "Ce qui distingue KHADMATONA",
     "pillar1Title": "Sélection vérifiée",
     "pillar1Description": "Chaque bien publié est vérifié avant mise en ligne : documents de propriété, informations exactes, photos fidèles.",
@@ -86,6 +90,14 @@
     "resetFilters": "Réinitialiser",
     "heroSearchPlaceholder": "Une ville, un quartier, un titre…",
     "searchAriaLabel": "Rechercher un bien",
+    "location": "Localisation",
+    "allLocations": "Toutes les villes",
+    "priceRange": "Budget",
+    "anyPrice": "Tous les budgets",
+    "priceRangeUnder1M": "Moins de 1 000 000 MAD",
+    "priceRange1MTo3M": "1 000 000 – 3 000 000 MAD",
+    "priceRange3MTo6M": "3 000 000 – 6 000 000 MAD",
+    "priceRangeOver6M": "6 000 000 MAD et plus",
     "totalCount": "{count} bien(s) au total"
   },
   "PropertyDetail": {
@@ -266,7 +278,12 @@
     "loadError": "Impossible de charger ce bien.",
     "backToList": "← Retour à la liste",
     "details": "Détails",
-    "addedOnLabel": "Ajouté le"
+    "addedOnLabel": "Ajouté le",
+    "price": "Prix",
+    "address": "Adresse",
+    "surface": "Surface",
+    "bedrooms": "Chambres",
+    "bathrooms": "Salles de bain"
   },
   "PropertyForm": {
     "title": "Titre",

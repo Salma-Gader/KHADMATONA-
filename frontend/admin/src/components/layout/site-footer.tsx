@@ -165,7 +165,7 @@ export function SiteFooter() {
           <p className="mb-3 text-[0.7rem] font-bold tracking-wide text-text-muted uppercase">
             {t("findUs")}
           </p>
-          <div className="overflow-hidden rounded-lg border border-border shadow-sm">
+          <div className="overflow-hidden rounded-md border border-border shadow-sm">
             <iframe
               title={t("findUs")}
               src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}
