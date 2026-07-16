@@ -32,5 +32,8 @@ Route::prefix('auth')->name('auth.')->group(function () {
 Route::middleware(['auth:sanctum', 'role:Admin'])->group(function () {
     Route::get('/users', [UserController::class, 'index']);
     Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
     Route::get('/roles', RoleController::class);
 });

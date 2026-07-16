@@ -60,6 +60,29 @@ function readCookie(name: string): string | null {
 }
 
 /**
+ * Server-side counterpart of the browser's `readCookie("NEXT_LOCALE")` -
+ * `next/headers` is dynamically imported (never at module scope) so this
+ * file stays safe to import from client components, which is why this
+ * can't just be a static import like i18n/request.ts uses. Mirrors that
+ * same file's precedence (stored cookie -> incoming Accept-Language ->
+ * default) so API calls made during SSR resolve the same locale next-intl
+ * already resolved for the page's own translations.
+ */
+async function resolveServerLocale(): Promise<string | null> {
+  const { cookies, headers: nextHeaders } = await import("next/headers");
+  const { DEFAULT_LOCALE, LOCALE_COOKIE, isSupportedLocale } = await import(
+    "@/i18n/locales"
+  );
+
+  const cookieLocale = (await cookies()).get(LOCALE_COOKIE)?.value;
+  if (isSupportedLocale(cookieLocale)) return cookieLocale;
+
+  const acceptLanguage = (await nextHeaders()).get("accept-language") ?? "";
+  const preferred = acceptLanguage.split(",")[0]?.split("-")[0];
+  return isSupportedLocale(preferred) ? preferred : DEFAULT_LOCALE;
+}
+
+/**
  * fetch() with a hard upper bound. Rejects with an `ApiError` (status 0)
  * instead of leaving the caller awaiting forever if the network hangs or
  * the API doesn't respond in time - "no timeout" is exactly what let a slow
@@ -125,21 +148,31 @@ async function requestEnvelope<T>(
     const token = readCookie("XSRF-TOKEN");
     if (token) headers.set("X-XSRF-TOKEN", token);
   }
-  // Guarded to browser-only: this module is also called from Server
-  // Components during SSR (e.g. the homepage's listProperties()), where
-  // `document` doesn't exist. The backend's own locale-aware error/
-  // validation messages only ever surface from client-triggered mutations
-  // (form submissions), which always run in the browser, so this still
-  // covers the case that matters.
-  if (typeof document !== "undefined") {
-    const locale = readCookie("NEXT_LOCALE");
-    if (locale) headers.set("Accept-Language", locale);
-  }
+  // This module is called both from the browser and from Server Components
+  // during SSR (e.g. the homepage's listProperties()/getSettings()) -
+  // `document` only exists in the former, so the locale has to be read a
+  // different way in each: the browser's own cookie jar vs. the incoming
+  // request's cookies/headers via next/headers (resolveServerLocale).
+  // Without this, SSR-fetched locale-sensitive content (translated city
+  // names, Settings text) would always resolve to the backend's default
+  // instead of the actual visitor's locale.
+  const locale =
+    typeof document !== "undefined"
+      ? readCookie("NEXT_LOCALE")
+      : await resolveServerLocale();
+  if (locale) headers.set("Accept-Language", locale);
 
   const response = await fetchWithTimeout(`${API_URL}${path}`, {
     ...options,
     headers,
     credentials: "include",
+    // Every response here is either user-specific or can change from an
+    // admin action at any time (property listings, settings, auth state) -
+    // Next's fetch Data Cache keys purely by URL, not by the Accept-Language
+    // header set just above, so leaving caching on would serve one locale's
+    // (or one user's) cached response to every other visitor hitting the
+    // same path during SSR.
+    cache: "no-store",
   });
 
   // A stale CSRF cookie (e.g. after a session change elsewhere) fails once

@@ -3,6 +3,8 @@ import { useTranslations } from "next-intl";
 import { LeadForm } from "@/components/leads/lead-form";
 import { Card } from "@/components/ui/card";
 import { Reveal } from "@/components/ui/reveal";
+import { getSettings } from "@/lib/settings";
+import type { Settings } from "@/types/settings";
 
 export async function generateMetadata() {
   const t = await getTranslations("Contact");
@@ -35,10 +37,15 @@ function MailIcon() {
   );
 }
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const settings = await getSettings();
+
+  return <ContactPageContent settings={settings} />;
+}
+
+function ContactPageContent({ settings }: { settings: Settings }) {
   const t = useTranslations("Contact");
   const leads = useTranslations("Leads");
-  const footer = useTranslations("Footer");
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
@@ -62,38 +69,42 @@ export default function ContactPage() {
               <PinIcon />
               <div>
                 <p className="font-semibold text-text">{t("address")}</p>
-                <p className="text-[0.9rem] text-text-muted">{footer("address")}</p>
+                <p className="text-[0.9rem] text-text-muted">{settings.address}</p>
               </div>
             </div>
-            <div className="flex items-start gap-3">
-              <PhoneIcon />
-              <div>
-                <p className="font-semibold text-text">{t("phone")}</p>
-                <a
-                  href="tel:+212500000000"
-                  className="text-[0.9rem] text-text-muted hover:text-gold-primary"
-                  dir="ltr"
-                >
-                  +212 5 00 00 00 00
-                </a>
+            {settings.contact_phone && (
+              <div className="flex items-start gap-3">
+                <PhoneIcon />
+                <div>
+                  <p className="font-semibold text-text">{t("phone")}</p>
+                  <a
+                    href={`tel:${settings.contact_phone.replace(/\s+/g, "")}`}
+                    className="text-[0.9rem] text-text-muted hover:text-gold-primary"
+                    dir="ltr"
+                  >
+                    {settings.contact_phone}
+                  </a>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <MailIcon />
-              <div>
-                <p className="font-semibold text-text">{t("email")}</p>
-                <a
-                  href="mailto:contact@khadmatona.ma"
-                  className="text-[0.9rem] text-text-muted hover:text-gold-primary"
-                  dir="ltr"
-                >
-                  contact@khadmatona.ma
-                </a>
+            )}
+            {settings.contact_email && (
+              <div className="flex items-start gap-3">
+                <MailIcon />
+                <div>
+                  <p className="font-semibold text-text">{t("email")}</p>
+                  <a
+                    href={`mailto:${settings.contact_email}`}
+                    className="text-[0.9rem] text-text-muted hover:text-gold-primary"
+                    dir="ltr"
+                  >
+                    {settings.contact_email}
+                  </a>
+                </div>
               </div>
-            </div>
+            )}
             <div className="border-t border-border pt-4 text-[0.85rem] text-text-muted">
-              <p>{t("weekdays")}</p>
-              <p>{t("saturday")}</p>
+              <p>{settings.business_hours_weekdays}</p>
+              <p>{settings.business_hours_saturday}</p>
             </div>
           </Card>
         </Reveal>

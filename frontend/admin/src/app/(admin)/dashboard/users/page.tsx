@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/table";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
 import { ApiError } from "@/lib/api";
-import { listUsers } from "@/lib/users";
+import { useAuth } from "@/lib/auth-context";
+import { deleteUser, listUsers } from "@/lib/users";
 import type { User } from "@/types/api";
 import type { Pagination as PaginationData } from "@/types/property";
 
@@ -29,11 +30,13 @@ const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
 
 export default function UsersListPage() {
   const t = useTranslations("DashboardUsers");
+  const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,6 +66,20 @@ export default function UsersListPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `t` is stable per locale render
   }, [page]);
 
+  async function handleDelete(user: User) {
+    if (!confirm(t("confirmDelete", { name: user.name }))) return;
+
+    setDeletingId(user.id);
+    try {
+      await deleteUser(user.id);
+      setUsers((current) => current.filter((u) => u.id !== user.id));
+    } catch (caught) {
+      setError(caught instanceof ApiError ? caught.message : t("deleteError"));
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -80,7 +97,7 @@ export default function UsersListPage() {
       {error && <Alert tone="error">{error}</Alert>}
 
       {isLoading ? (
-        <TableSkeleton rows={6} columns={4} />
+        <TableSkeleton rows={6} columns={5} />
       ) : users.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border-strong bg-surface-muted p-8 text-center sm:p-12">
           <h3 className="font-display text-xl font-semibold text-text">{t("noResultsTitle")}</h3>
@@ -93,6 +110,7 @@ export default function UsersListPage() {
               <TableHeaderCell>{t("email")}</TableHeaderCell>
               <TableHeaderCell>{t("role")}</TableHeaderCell>
               <TableHeaderCell>{t("createdOn")}</TableHeaderCell>
+              <TableHeaderCell className="text-end">{t("actions")}</TableHeaderCell>
             </TableHead>
             <TableBody>
               {users.map((user) => (
@@ -111,6 +129,26 @@ export default function UsersListPage() {
                     )}
                   </TableCell>
                   <TableCell>{dateFormatter.format(new Date(user.created_at))}</TableCell>
+                  <TableCell>
+                    <div className="flex justify-end gap-3 text-[0.82rem] font-semibold">
+                      <Link
+                        href={`/dashboard/users/${user.id}/edit`}
+                        className="text-gold-primary hover:underline"
+                      >
+                        {t("edit")}
+                      </Link>
+                      {currentUser?.id !== user.id && (
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(user)}
+                          disabled={deletingId === user.id}
+                          className="text-error hover:underline disabled:opacity-50"
+                        >
+                          {deletingId === user.id ? t("deleting") : t("delete")}
+                        </button>
+                      )}
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

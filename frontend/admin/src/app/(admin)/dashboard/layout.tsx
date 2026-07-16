@@ -12,7 +12,7 @@ import { useAuth } from "@/lib/auth-context";
 
 function FullScreenSpinner({ label }: { label: string }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-mist">
+    <div className="flex min-h-screen items-center justify-center bg-bg">
       <span
         className="h-8 w-8 animate-spin rounded-full border-[3px] border-border border-t-gold-primary"
         role="status"
@@ -48,7 +48,7 @@ export default function DashboardLayout({
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-mist px-6">
+      <div className="flex min-h-screen items-center justify-center bg-bg px-6">
         <div className="w-full max-w-sm text-center">
           <Alert tone="error" title={t("sessionErrorTitle")}>
             {error}
@@ -69,7 +69,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-mist">
+    <div className="flex min-h-screen bg-bg">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar onMenuClick={() => setSidebarOpen(true)} />

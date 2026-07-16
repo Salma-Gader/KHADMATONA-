@@ -139,8 +139,8 @@ export function SiteHeader() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-charcoal/10 bg-paper/90 text-ink shadow-sm backdrop-blur-md supports-[backdrop-filter]:bg-paper/80">
-      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 border-b border-charcoal/10 bg-paper text-ink shadow-sm">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-4 px-4 sm:px-5 lg:px-6">
         <Link
           href="/"
           className="flex shrink-0 items-center gap-2.5 text-gold-primary transition-opacity hover:opacity-85"

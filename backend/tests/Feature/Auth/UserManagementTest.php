@@ -88,3 +88,111 @@ test('an admin can list available roles', function () {
 
     $response->assertOk()->assertJsonFragment(['data' => ['Admin']]);
 });
+
+test('a guest cannot view, update, or delete a user', function () {
+    $user = User::factory()->create();
+
+    $this->getJson("/api/v1/users/{$user->id}")->assertStatus(401);
+    $this->putJson("/api/v1/users/{$user->id}", [])->assertStatus(401);
+    $this->deleteJson("/api/v1/users/{$user->id}")->assertStatus(401);
+});
+
+test('an authenticated user without the Admin role cannot view, update, or delete a user', function () {
+    $nonAdmin = User::factory()->create();
+    $target = User::factory()->create();
+
+    $this->actingAs($nonAdmin)->getJson("/api/v1/users/{$target->id}")->assertStatus(403);
+    $this->actingAs($nonAdmin)->putJson("/api/v1/users/{$target->id}", [])->assertStatus(403);
+    $this->actingAs($nonAdmin)->deleteJson("/api/v1/users/{$target->id}")->assertStatus(403);
+});
+
+test('an admin can view a single user', function () {
+    $target = User::factory()->create(['name' => 'Nadia Fassi']);
+    $target->assignRole('Admin');
+
+    $response = $this->actingAs($this->admin)->getJson("/api/v1/users/{$target->id}");
+
+    $response->assertOk()
+        ->assertJsonPath('data.name', 'Nadia Fassi')
+        ->assertJsonPath('data.roles.0', 'Admin');
+});
+
+test('an admin can update a user without changing the password', function () {
+    $target = User::factory()->create(['name' => 'Old Name', 'email' => 'old@example.com']);
+    $target->assignRole('Admin');
+    $originalHash = $target->password;
+
+    $response = $this->actingAs($this->admin)->putJson("/api/v1/users/{$target->id}", [
+        'name' => 'New Name',
+        'email' => 'new@example.com',
+        'password' => '',
+        'password_confirmation' => '',
+        'role' => 'Admin',
+    ]);
+
+    $response->assertOk()
+        ->assertJsonPath('data.name', 'New Name')
+        ->assertJsonPath('data.email', 'new@example.com');
+
+    expect($target->fresh()->password)->toBe($originalHash);
+});
+
+test('an admin can update a user\'s password', function () {
+    $target = User::factory()->create();
+    $target->assignRole('Admin');
+    $originalHash = $target->password;
+
+    $response = $this->actingAs($this->admin)->putJson("/api/v1/users/{$target->id}", [
+        'name' => $target->name,
+        'email' => $target->email,
+        'password' => 'NewPassword123!',
+        'password_confirmation' => 'NewPassword123!',
+        'role' => 'Admin',
+    ]);
+
+    $response->assertOk();
+    expect($target->fresh()->password)->not->toBe($originalHash);
+});
+
+test('updating a user rejects an email already used by someone else', function () {
+    $other = User::factory()->create(['email' => 'taken@example.com']);
+    $target = User::factory()->create();
+
+    $response = $this->actingAs($this->admin)->putJson("/api/v1/users/{$target->id}", [
+        'name' => $target->name,
+        'email' => 'taken@example.com',
+        'role' => 'Admin',
+    ]);
+
+    $response->assertStatus(422)->assertJsonValidationErrors(['email']);
+    expect($other)->not->toBeNull();
+});
+
+test('updating a user keeps its own email valid', function () {
+    $target = User::factory()->create(['email' => 'self@example.com']);
+    $target->assignRole('Admin');
+
+    $response = $this->actingAs($this->admin)->putJson("/api/v1/users/{$target->id}", [
+        'name' => 'Renamed',
+        'email' => 'self@example.com',
+        'role' => 'Admin',
+    ]);
+
+    $response->assertOk()->assertJsonPath('data.email', 'self@example.com');
+});
+
+test('an admin can delete another user', function () {
+    $target = User::factory()->create();
+
+    $response = $this->actingAs($this->admin)->deleteJson("/api/v1/users/{$target->id}");
+
+    $response->assertOk();
+    $this->assertDatabaseMissing('users', ['id' => $target->id]);
+});
+
+test('an admin cannot delete their own account', function () {
+    $response = $this->actingAs($this->admin)->deleteJson("/api/v1/users/{$this->admin->id}");
+
+    $response->assertStatus(422)->assertJson(['code' => 'cannot_delete_self']);
+    $this->assertDatabaseHas('users', ['id' => $this->admin->id]);
+});

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans_Arabic, Manrope, Poppins } from "next/font/google";
+import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { AuthProvider } from "@/lib/auth-context";
@@ -80,7 +81,11 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: NO_FLASH_THEME_SCRIPT }} />
+        <Script
+          id="no-flash-theme"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: NO_FLASH_THEME_SCRIPT }}
+        />
       </head>
       {/* Browser extensions (grammar checkers, security/ad-block tools)
           commonly inject attributes into <html>/<body> before React

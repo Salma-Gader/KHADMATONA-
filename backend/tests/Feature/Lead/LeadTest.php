@@ -98,3 +98,23 @@ test('submitting a lead rejects a malformed phone number', function () {
 
     $response->assertStatus(422)->assertJsonValidationErrors(['phone']);
 });
+
+test('a lead accepts phone numbers from any country, not just Morocco', function () {
+    $numbers = [
+        '+212 6 12 34 56 78', // Morocco, with spaces
+        '+1 (415) 555-2671',  // United States
+        '+33 6 12 34 56 78',  // France
+        '+44 7911 123456',    // United Kingdom
+    ];
+
+    foreach ($numbers as $phone) {
+        $response = $this->postJson('/api/v1/leads', [
+            'type' => 'contact',
+            'name' => 'Test',
+            'email' => 'test+'.md5($phone).'@example.com',
+            'phone' => $phone,
+        ]);
+
+        $response->assertCreated();
+    }
+});

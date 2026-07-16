@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
 import { useTranslations } from "next-intl";
 import { Hero } from "@/components/home/hero";
 import { PropertyTypeGrid } from "@/components/home/property-type-grid";
@@ -10,6 +9,8 @@ import { AnimatedCounter } from "@/components/ui/animated-counter";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { listProperties } from "@/lib/properties";
+import { getSettings } from "@/lib/settings";
+import type { Settings } from "@/types/settings";
 
 // Otherwise this page would be prerendered once at build time and the
 // featured listings would never reflect new/updated properties without a
@@ -48,17 +49,29 @@ function ClockIcon() {
 }
 
 export async function generateMetadata() {
-  const t = await getTranslations("Home");
-  return { title: t("heroTitle"), description: t("heroSubtitle") };
+  const settings = await getSettings();
+  return {
+    title: `${settings.hero_title_before} ${settings.hero_title_accent} ${settings.hero_title_after}`,
+    description: settings.hero_subtitle,
+  };
 }
 
 export default async function HomePage() {
-  const { properties } = await listProperties({ perPage: 6, sort: "-created_at" });
+  const [{ properties }, settings] = await Promise.all([
+    listProperties({ perPage: 6, sort: "-created_at" }),
+    getSettings(),
+  ]);
 
-  return <HomeContent properties={properties} />;
+  return <HomeContent properties={properties} settings={settings} />;
 }
 
-function HomeContent({ properties }: { properties: Awaited<ReturnType<typeof listProperties>>["properties"] }) {
+function HomeContent({
+  properties,
+  settings,
+}: {
+  properties: Awaited<ReturnType<typeof listProperties>>["properties"];
+  settings: Settings;
+}) {
   const t = useTranslations("Home");
 
   const pillars = [
@@ -68,24 +81,24 @@ function HomeContent({ properties }: { properties: Awaited<ReturnType<typeof lis
   ];
 
   const stats = [
-    { value: t("stat1Value"), label: t("stat1Label") },
-    { value: t("stat2Value"), label: t("stat2Label") },
-    { value: t("stat3Value"), label: t("stat3Label") },
-    { value: t("stat4Value"), label: t("stat4Label") },
+    { value: settings.stat1_value ?? "", label: settings.stat1_label ?? "" },
+    { value: settings.stat2_value ?? "", label: settings.stat2_label ?? "" },
+    { value: settings.stat3_value ?? "", label: settings.stat3_label ?? "" },
+    { value: settings.stat4_value ?? "", label: settings.stat4_label ?? "" },
   ];
 
   return (
     <div className="flex flex-col">
       <Hero
-        eyebrow={t("eyebrow")}
-        titleBefore={t("heroTitleBefore")}
-        titleAccent={t("heroTitleAccent")}
-        titleAfter={t("heroTitleAfter")}
-        subtitle={t("heroSubtitle")}
+        eyebrow={settings.hero_eyebrow ?? ""}
+        titleBefore={settings.hero_title_before ?? ""}
+        titleAccent={settings.hero_title_accent ?? ""}
+        titleAfter={settings.hero_title_after ?? ""}
+        subtitle={settings.hero_subtitle ?? ""}
       />
 
-      <section className="px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
+      <section className="px-4 py-12 sm:px-5 lg:px-6">
+        <div className="mx-auto max-w-7xl">
           <Reveal className="mb-10 flex flex-wrap items-end justify-between gap-4">
             <div>
               <h2 className="font-display text-3xl font-semibold text-text">
@@ -112,8 +125,8 @@ function HomeContent({ properties }: { properties: Awaited<ReturnType<typeof lis
         </div>
       </section>
 
-      <section className="px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
+      <section className="px-4 py-12 sm:px-5 lg:px-6">
+        <div className="mx-auto max-w-7xl">
           <Reveal className="mb-10 text-center">
             <h2 className="font-display text-3xl font-semibold text-text">
               {t("browseByTypeTitle")}
@@ -125,8 +138,8 @@ function HomeContent({ properties }: { properties: Awaited<ReturnType<typeof lis
         </div>
       </section>
 
-      <section className="bg-surface-muted px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
+      <section className="bg-surface-muted px-4 py-12 sm:px-5 lg:px-6">
+        <div className="mx-auto max-w-7xl">
           <Reveal className="mb-10 text-center">
             <h2 className="font-display text-3xl font-semibold text-text">{t("pillarsTitle")}</h2>
           </Reveal>
@@ -145,8 +158,8 @@ function HomeContent({ properties }: { properties: Awaited<ReturnType<typeof lis
         </div>
       </section>
 
-      <section id="vendre-louer" className="scroll-mt-20 px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
+      <section id="vendre-louer" className="scroll-mt-20 px-4 py-12 sm:px-5 lg:px-6">
+        <div className="mx-auto max-w-7xl">
           <Reveal className="mb-10 text-center">
             <h2 className="font-display text-3xl font-semibold text-text">
               {t("sellRentTitle")}
@@ -159,8 +172,8 @@ function HomeContent({ properties }: { properties: Awaited<ReturnType<typeof lis
         </div>
       </section>
 
-      <section className="border-t border-border bg-ink px-4 py-16 text-white sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
+      <section className="border-t border-border bg-ink px-4 py-12 text-white sm:px-5 lg:px-6">
+        <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">

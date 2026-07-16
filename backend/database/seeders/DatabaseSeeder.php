@@ -6,6 +6,7 @@ use App\Core\Lookup\Database\Seeders\CitySeeder;
 use App\Core\Permissions\Database\Seeders\PermissionSeeder;
 use App\Models\User;
 use App\Modules\Property\Database\Seeders\PropertySeeder;
+use App\Modules\Settings\Database\Seeders\SettingsSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,6 +23,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(PermissionSeeder::class);
         $this->call(CitySeeder::class);
+        $this->call(SettingsSeeder::class);
 
         if (! User::where('email', 'admin@khadmatona.test')->exists()) {
             $admin = User::factory()->create([

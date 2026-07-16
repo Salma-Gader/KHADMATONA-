@@ -6,6 +6,13 @@
  * the six brand colors are mandatory and fixed.
  */
 :root {
+  /* Tells the browser which native form-control chrome to use (select
+     dropdown popups, checkboxes/radios, scrollbars, number-input spinners)
+     - these follow color-scheme, not your own CSS colors, so without this
+     they render with light-mode-only OS chrome even while data-theme="dark"
+     is active everywhere else. Kept in sync with the token blocks below. */
+  color-scheme: light;
+
   /* ---- Mandatory brand palette ---- */
   --color-gold-primary: #c89211;
   --color-gold-secondary: #e2b84d;
@@ -54,6 +61,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    color-scheme: dark;
     --color-bg: var(--color-ink);
     --color-surface: #17110a;
     --color-surface-muted: var(--color-charcoal);
@@ -82,6 +90,7 @@
    query so a user who prefers light-in-a-dark-OS (or vice versa) is
    respected. */
 :root[data-theme="dark"] {
+  color-scheme: dark;
   --color-bg: var(--color-ink);
   --color-surface: #17110a;
   --color-surface-muted: var(--color-charcoal);
@@ -104,6 +113,7 @@
 }
 
 :root[data-theme="light"] {
+  color-scheme: light;
   --color-bg: var(--color-paper);
   --color-surface: var(--color-paper);
   --color-surface-muted: var(--color-mist);

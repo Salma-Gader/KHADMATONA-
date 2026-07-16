@@ -1,14 +1,9 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { getSettings } from "@/lib/settings";
+import type { Settings } from "@/types/settings";
 
-// Placeholder handles - swap for the real KHADMATONA business accounts
-// once they exist.
-const SOCIAL_LINKS = [
-  { name: "Facebook", href: "https://facebook.com/khadmatona" },
-  { name: "Instagram", href: "https://instagram.com/khadmatona" },
-  { name: "LinkedIn", href: "https://linkedin.com/company/khadmatona" },
-  { name: "WhatsApp", href: "https://wa.me/212600000000" },
-] as const;
+const SOCIAL_NAMES = ["Facebook", "Instagram", "LinkedIn", "WhatsApp"] as const;
 
 function FacebookIcon() {
   return (
@@ -64,14 +59,34 @@ function WhatsAppIcon() {
   );
 }
 
-const SOCIAL_ICONS: Record<(typeof SOCIAL_LINKS)[number]["name"], () => React.JSX.Element> = {
+const SOCIAL_ICONS: Record<(typeof SOCIAL_NAMES)[number], () => React.JSX.Element> = {
   Facebook: FacebookIcon,
   Instagram: InstagramIcon,
   LinkedIn: LinkedInIcon,
   WhatsApp: WhatsAppIcon,
 };
 
-export function SiteFooter() {
+/**
+ * Each platform's own official brand color - a deliberate exception to the
+ * site's own 6-color palette (globals.css), since these badges represent
+ * someone else's brand identity, not KHADMATONA's. Instagram uses its real
+ * multi-stop brand gradient rather than a flat swatch, same as everywhere
+ * Instagram's own badge appears.
+ */
+const SOCIAL_BACKGROUNDS: Record<(typeof SOCIAL_NAMES)[number], string> = {
+  Facebook: "#1877F2",
+  Instagram: "radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)",
+  LinkedIn: "#0A66C2",
+  WhatsApp: "#25D366",
+};
+
+export async function SiteFooter() {
+  const settings = await getSettings();
+
+  return <SiteFooterContent settings={settings} />;
+}
+
+function SiteFooterContent({ settings }: { settings: Settings }) {
   const t = useTranslations("Footer");
   const nav = useTranslations("Nav");
 
@@ -82,11 +97,19 @@ export function SiteFooter() {
     { href: "/contact", label: nav("contact") },
   ];
 
-  const mapQuery = encodeURIComponent(t("address"));
+  const socialLinks: Record<(typeof SOCIAL_NAMES)[number], string | null> = {
+    Facebook: settings.social_facebook,
+    Instagram: settings.social_instagram,
+    LinkedIn: settings.social_linkedin,
+    WhatsApp: settings.social_whatsapp,
+  };
+
+  const address = settings.address ?? "";
+  const mapQuery = encodeURIComponent(address);
 
   return (
     <footer className="border-t border-border bg-surface-muted">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-12 sm:grid-cols-2 sm:px-5 lg:grid-cols-4 lg:px-6">
         <div>
           <p className="font-display text-xl font-semibold text-text">
             {nav("brand")} <em className="text-gold-primary not-italic">{nav("brandSuffix")}</em>
@@ -97,16 +120,19 @@ export function SiteFooter() {
             {t("followUs")}
           </p>
           <div className="mt-3 flex items-center gap-2">
-            {SOCIAL_LINKS.map((social) => {
-              const Icon = SOCIAL_ICONS[social.name];
+            {SOCIAL_NAMES.map((name) => {
+              const href = socialLinks[name];
+              if (!href) return null;
+              const Icon = SOCIAL_ICONS[name];
               return (
                 <a
-                  key={social.name}
-                  href={social.href}
+                  key={name}
+                  href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={social.name}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border-strong text-text-muted transition-colors hover:border-gold-primary hover:text-gold-primary"
+                  aria-label={name}
+                  style={{ background: SOCIAL_BACKGROUNDS[name] }}
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-white shadow-sm transition-transform hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <Icon />
                 </a>
@@ -135,17 +161,25 @@ export function SiteFooter() {
             {t("contact")}
           </p>
           <ul className="flex flex-col gap-2 text-sm text-text-muted">
-            <li>{t("address")}</li>
-            <li>
-              <a href="tel:+212500000000" className="hover:text-gold-primary" dir="ltr">
-                +212 5 00 00 00 00
-              </a>
-            </li>
-            <li>
-              <a href="mailto:contact@khadmatona.ma" className="hover:text-gold-primary" dir="ltr">
-                contact@khadmatona.ma
-              </a>
-            </li>
+            <li>{address}</li>
+            {settings.contact_phone && (
+              <li>
+                <a
+                  href={`tel:${settings.contact_phone.replace(/\s+/g, "")}`}
+                  className="hover:text-gold-primary"
+                  dir="ltr"
+                >
+                  {settings.contact_phone}
+                </a>
+              </li>
+            )}
+            {settings.contact_email && (
+              <li>
+                <a href={`mailto:${settings.contact_email}`} className="hover:text-gold-primary" dir="ltr">
+                  {settings.contact_email}
+                </a>
+              </li>
+            )}
           </ul>
         </div>
 
@@ -154,14 +188,14 @@ export function SiteFooter() {
             {t("hours")}
           </p>
           <ul className="flex flex-col gap-2 text-sm text-text-muted">
-            <li>{t("weekdays")}</li>
-            <li>{t("saturday")}</li>
+            <li>{settings.business_hours_weekdays}</li>
+            <li>{settings.business_hours_saturday}</li>
           </ul>
         </div>
       </div>
 
-      <div className="border-t border-border px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
+      <div className="border-t border-border px-4 py-10 sm:px-5 lg:px-6">
+        <div className="mx-auto max-w-7xl">
           <p className="mb-3 text-[0.7rem] font-bold tracking-wide text-text-muted uppercase">
             {t("findUs")}
           </p>
@@ -186,7 +220,7 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-border">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-5 text-[0.78rem] text-text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 text-[0.78rem] text-text-muted sm:flex-row sm:items-center sm:justify-between sm:px-5 lg:px-6">
           <p>
             © {new Date().getFullYear()} {nav("brand")} {nav("brandSuffix")}. {t("rights")}
           </p>

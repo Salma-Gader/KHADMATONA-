@@ -1,7 +1,6 @@
 import { HeroSearch } from "@/components/home/hero-search";
 
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=2400&h=1500&fit=crop&q=85";
+const HERO_IMAGE = "https://i.pinimg.com/736x/a0/2b/12/a02b127d48169547a14bd9b54ad7b0a2.jpg";
 
 export function Hero({
   eyebrow,
@@ -42,7 +41,7 @@ export function Hero({
           the whole hero content being one vertically-centered group - the
           search bar is anchored near the bottom edge instead (matches the
           reference layout: headline upper/middle, search bar pinned low). */}
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pt-24 text-center sm:px-6 lg:px-8">
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pt-24 text-center sm:px-5 lg:px-6">
         <p
           className="hero-reveal mb-5 flex items-center justify-center gap-3 text-[0.72rem] font-bold tracking-[0.28em] text-gold-secondary uppercase"
           style={{ animationDelay: "0ms" }}
@@ -65,7 +64,7 @@ export function Hero({
         </p>
       </div>
 
-      <div className="relative z-10 w-full px-4 pb-8 sm:px-6 sm:pb-10 lg:px-8">
+      <div className="relative z-10 w-full px-4 pb-8 sm:px-5 sm:pb-10 lg:px-6">
         <div className="hero-reveal mx-auto max-w-4xl" style={{ animationDelay: "400ms" }}>
           <HeroSearch />
         </div>

@@ -19,14 +19,19 @@ const EMPTY_VALUES: UserFormValues = {
 };
 
 export function UserForm({
+  initialValues,
+  isEditing = false,
   submitLabel,
   onSubmit,
 }: {
+  initialValues?: UserFormValues;
+  /** Password becomes optional (blank = keep current) once editing. */
+  isEditing?: boolean;
   submitLabel: string;
   onSubmit: (values: UserFormValues) => Promise<void>;
 }) {
   const t = useTranslations("UserForm");
-  const [values, setValues] = useState<UserFormValues>(EMPTY_VALUES);
+  const [values, setValues] = useState<UserFormValues>(initialValues ?? EMPTY_VALUES);
   const [roles, setRoles] = useState<string[]>([]);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -39,8 +44,11 @@ export function UserForm({
       .then((data) => {
         if (cancelled) return;
         setRoles(data);
-        if (data.length > 0) {
-          setValues((current) => ({ ...current, role: data[0] }));
+        // Only default to the first role for a brand-new (create) form -
+        // an edit form already has the user's real role from initialValues,
+        // which this must not clobber once the role list arrives.
+        if (data.length > 0 && !initialValues?.role) {
+          setValues((current) => ({ ...current, role: current.role || data[0] }));
         }
       })
       .catch(() => {
@@ -50,7 +58,8 @@ export function UserForm({
     return () => {
       cancelled = true;
     };
-  }, [t]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- initialValues/t are stable for the form's lifetime
+  }, []);
 
   function set<K extends keyof UserFormValues>(key: K, value: UserFormValues[K]) {
     setValues((current) => ({ ...current, [key]: value }));
@@ -105,7 +114,8 @@ export function UserForm({
         <Field
           label={t("password")}
           type="password"
-          required
+          required={!isEditing}
+          hint={isEditing ? t("passwordHint") : undefined}
           value={values.password}
           onChange={(event) => set("password", event.target.value)}
           error={fieldErrors.password}
@@ -113,7 +123,7 @@ export function UserForm({
         <Field
           label={t("passwordConfirmation")}
           type="password"
-          required
+          required={!isEditing}
           value={values.password_confirmation}
           onChange={(event) => set("password_confirmation", event.target.value)}
         />

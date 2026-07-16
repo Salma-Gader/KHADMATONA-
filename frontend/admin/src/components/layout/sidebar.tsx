@@ -170,7 +170,7 @@ export function Sidebar({
 
   const trailingItems: NavItem[] = [
     { href: "/dashboard/users", label: t("users"), icon: <UsersIcon /> },
-    { href: "/dashboard/settings", label: t("settings"), icon: <SettingsIcon />, comingSoon: true },
+    { href: "/dashboard/settings", label: t("settings"), icon: <SettingsIcon /> },
   ];
 
   useEffect(() => {
