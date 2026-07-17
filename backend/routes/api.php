@@ -9,3 +9,4 @@ require __DIR__.'/../app/Modules/Property/Http/routes.php';
 require __DIR__.'/../app/Modules/Lead/Http/routes.php';
 require __DIR__.'/../app/Modules/Lookup/Http/routes.php';
 require __DIR__.'/../app/Modules/Settings/Http/routes.php';
+require __DIR__.'/../app/Modules/Blog/Http/routes.php';

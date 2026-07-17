@@ -293,11 +293,58 @@ Full details, branch naming, commit conventions, and the code review checklist a
 
 ## Deployment
 
-Deployment targets and CI/CD pipeline are not finalized yet. When they are, this section will
-document: the hosting target, the build/release process, required production environment
-variables, queue worker and scheduler process management, and zero-downtime migration strategy.
-Until then, treat `main` as the source of truth for what's deployable, and coordinate any
-production release manually with the team.
+Production deployment is a self-hosted VPS stack, defined in `docker-compose.prod.yml` at the
+repo root — separate from `backend/compose.yaml` and `frontend/admin/compose.yaml`, which are
+local dev only (Sail, and a bind-mounted `npm run dev` container respectively).
+
+**Architecture:** Caddy (automatic HTTPS via Let's Encrypt, zero extra config) reverse-proxies
+two domains to two internal-only services — `backend` (a self-contained nginx + php-fpm + queue
+worker image, `backend/Dockerfile.prod`) and `frontend` (a Next.js standalone image,
+`frontend/admin/Dockerfile.prod`) — plus `mysql` and `redis`. Only Caddy publishes ports to the
+host; every other service stays on the internal Docker network.
+
+**One-time server setup:**
+
+```bash
+git clone https://github.com/Salma-Gader/KHADMATONA-.git
+cd KHADMATONA-
+
+cp .env.prod.example .env.prod
+cp backend/.env.production.example backend/.env
+# Edit both:
+#  - .env.prod: real APP_DOMAIN/API_DOMAIN (DNS must already point at this VPS) + DB credentials
+#  - backend/.env: matching DB credentials, real Cloudinary keys, SMTP mail credentials,
+#    SESSION_DOMAIN/SANCTUM_STATEFUL_DOMAINS/FRONTEND_URL for the real domains
+
+docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+docker compose -f docker-compose.prod.yml exec backend php artisan key:generate --force
+docker compose -f docker-compose.prod.yml exec backend php artisan migrate --force
+docker compose -f docker-compose.prod.yml exec backend php artisan db:seed --class="App\Core\Permissions\Database\Seeders\PermissionSeeder" --force
+```
+
+Caddy requests certificates for `APP_DOMAIN`/`API_DOMAIN` on first request — both domains' DNS
+records must already resolve to the VPS before `up`, and ports 80/443 must be reachable.
+
+**Releasing a new version** (no zero-downtime guarantee yet — a brief restart per service):
+
+```bash
+git pull
+docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+docker compose -f docker-compose.prod.yml exec backend php artisan migrate --force
+```
+
+Migrations are always a manual, explicit step (not run automatically on container start) so
+they never race across a restart or multiple replicas.
+
+**Queue worker / scheduler:** the queue worker (`php artisan queue:work`) runs inside the
+`backend` container under supervisord alongside nginx and php-fpm — see
+`backend/docker/supervisor/production.conf`. There's no scheduler process yet because no
+`->withSchedule()` calls exist in `backend/bootstrap/app.php` (`routes/console.php` only
+registers `artisan inspire`); add one there and a `[program:scheduler]` entry running
+`php artisan schedule:work` if a scheduled task is ever introduced.
+
+**Never commit** `.env.prod` or `backend/.env` — both are gitignored. The `.example` templates
+are safe to commit and are kept up to date with every new non-secret configuration key.
 
 ## License
 

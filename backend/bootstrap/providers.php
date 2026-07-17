@@ -4,6 +4,7 @@ use App\Core\Auth\CoreAuthServiceProvider;
 use App\Core\Localization\CoreLocalizationServiceProvider;
 use App\Core\Lookup\CoreLookupServiceProvider;
 use App\Core\Permissions\CorePermissionsServiceProvider;
+use App\Modules\Blog\BlogServiceProvider;
 use App\Modules\Lead\LeadServiceProvider;
 use App\Modules\Lookup\LookupServiceProvider;
 use App\Modules\Property\PropertyServiceProvider;
@@ -24,4 +25,5 @@ return [
     LeadServiceProvider::class,
     LookupServiceProvider::class,
     SettingsServiceProvider::class,
+    BlogServiceProvider::class,
 ];
