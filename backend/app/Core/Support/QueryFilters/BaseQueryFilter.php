@@ -2,6 +2,7 @@
 
 namespace App\Core\Support\QueryFilters;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -16,9 +17,15 @@ abstract class BaseQueryFilter
     public function __construct(protected Request $request) {}
 
     /**
-     * @return class-string
+     * A plain class-string is enough for a module with no required eager
+     * loads (e.g. LeadFilter). A module whose Resource always needs
+     * relations (e.g. PropertyResource needing city/district/media) should
+     * return a pre-built Builder with ->with(...) already applied instead,
+     * so the list endpoint never N+1s.
+     *
+     * @return class-string|Builder
      */
-    abstract protected function subject(): string;
+    abstract protected function subject(): string|Builder;
 
     /**
      * @return array<int, string|AllowedFilter>

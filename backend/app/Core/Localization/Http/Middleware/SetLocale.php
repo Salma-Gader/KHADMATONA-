@@ -31,8 +31,17 @@ class SetLocale
 
     private function fromAcceptLanguage(Request $request, array $supported): ?string
     {
-        $preferred = $request->getPreferredLanguage($supported);
+        // Symfony's getPreferredLanguage() doesn't return null when no
+        // Accept-Language header is present - it returns $supported[0]
+        // instead, which silently defeats the "then the app's configured
+        // fallback" step below whenever $supported[0] isn't the fallback
+        // locale (SUPPORTED_LOCALES=ar,fr,en, but APP_FALLBACK_LOCALE=fr).
+        // Guarding on the header's actual presence restores the intended
+        // three-step fallback chain.
+        if (! $request->headers->has('Accept-Language')) {
+            return null;
+        }
 
-        return $preferred;
+        return $request->getPreferredLanguage($supported);
     }
 }

@@ -4,7 +4,11 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost";
 // unresponsive API leaves callers (e.g. AuthProvider's initial /auth/me
 // check) awaiting a promise that never settles, which surfaces as a loading
 // state that never resolves - see the dashboard "stuck on loading" incident.
-const REQUEST_TIMEOUT_MS = 15_000;
+// 30s (not 15s) because the local Sail backend's first request after any
+// container restart pays a one-time opcache cold-compile cost of ~15-20s on
+// this machine's slow Docker-on-Windows bind mount - a hard 15s cutoff was
+// aborting exactly that legitimate (if slow) first response.
+const REQUEST_TIMEOUT_MS = 30_000;
 
 interface ApiSuccess<T> {
   success: true;
@@ -53,6 +57,29 @@ function readCookie(name: string): string | null {
     new RegExp(`(?:^|; )${name}=([^;]*)`),
   );
   return match ? decodeURIComponent(match[1]) : null;
+}
+
+/**
+ * Server-side counterpart of the browser's `readCookie("NEXT_LOCALE")` -
+ * `next/headers` is dynamically imported (never at module scope) so this
+ * file stays safe to import from client components, which is why this
+ * can't just be a static import like i18n/request.ts uses. Mirrors that
+ * same file's precedence (stored cookie -> incoming Accept-Language ->
+ * default) so API calls made during SSR resolve the same locale next-intl
+ * already resolved for the page's own translations.
+ */
+async function resolveServerLocale(): Promise<string | null> {
+  const { cookies, headers: nextHeaders } = await import("next/headers");
+  const { DEFAULT_LOCALE, LOCALE_COOKIE, isSupportedLocale } = await import(
+    "@/i18n/locales"
+  );
+
+  const cookieLocale = (await cookies()).get(LOCALE_COOKIE)?.value;
+  if (isSupportedLocale(cookieLocale)) return cookieLocale;
+
+  const acceptLanguage = (await nextHeaders()).get("accept-language") ?? "";
+  const preferred = acceptLanguage.split(",")[0]?.split("-")[0];
+  return isSupportedLocale(preferred) ? preferred : DEFAULT_LOCALE;
 }
 
 /**
@@ -112,16 +139,40 @@ async function requestEnvelope<T>(
 
   const headers = new Headers(options.headers);
   headers.set("Accept", "application/json");
-  if (options.body) headers.set("Content-Type", "application/json");
+  // FormData bodies must NOT get an explicit Content-Type - the browser
+  // sets the multipart boundary itself when it's left unset.
+  if (options.body && !(options.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
   if (isMutating) {
     const token = readCookie("XSRF-TOKEN");
     if (token) headers.set("X-XSRF-TOKEN", token);
   }
+  // This module is called both from the browser and from Server Components
+  // during SSR (e.g. the homepage's listProperties()/getSettings()) -
+  // `document` only exists in the former, so the locale has to be read a
+  // different way in each: the browser's own cookie jar vs. the incoming
+  // request's cookies/headers via next/headers (resolveServerLocale).
+  // Without this, SSR-fetched locale-sensitive content (translated city
+  // names, Settings text) would always resolve to the backend's default
+  // instead of the actual visitor's locale.
+  const locale =
+    typeof document !== "undefined"
+      ? readCookie("NEXT_LOCALE")
+      : await resolveServerLocale();
+  if (locale) headers.set("Accept-Language", locale);
 
   const response = await fetchWithTimeout(`${API_URL}${path}`, {
     ...options,
     headers,
     credentials: "include",
+    // Every response here is either user-specific or can change from an
+    // admin action at any time (property listings, settings, auth state) -
+    // Next's fetch Data Cache keys purely by URL, not by the Accept-Language
+    // header set just above, so leaving caching on would serve one locale's
+    // (or one user's) cached response to every other visitor hitting the
+    // same path during SSR.
+    cache: "no-store",
   });
 
   // A stale CSRF cookie (e.g. after a session change elsewhere) fails once
@@ -167,5 +218,22 @@ export const api = {
       method: "PUT",
       body: body !== undefined ? JSON.stringify(body) : undefined,
     }),
+  patch: <T,>(path: string, body?: unknown) =>
+    request<T>(path, {
+      method: "PATCH",
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    }),
   delete: <T,>(path: string) => request<T>(path, { method: "DELETE" }),
+  /** For multipart/form-data bodies (file uploads) - never JSON-encoded. */
+  postForm: <T,>(path: string, body: FormData) =>
+    request<T>(path, { method: "POST", body }),
+  /**
+   * PHP doesn't parse multipart bodies on PUT, so this sends POST with a
+   * spoofed `_method=PUT` field instead - Laravel's method-spoofing
+   * middleware is already active app-wide, no backend change needed.
+   */
+  putForm: <T,>(path: string, body: FormData) => {
+    body.append("_method", "PUT");
+    return request<T>(path, { method: "POST", body });
+  },
 };

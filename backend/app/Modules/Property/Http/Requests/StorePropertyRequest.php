@@ -23,14 +23,16 @@ class StorePropertyRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'type' => ['required', Rule::enum(PropertyType::class)],
             'status' => ['sometimes', Rule::enum(PropertyStatus::class)],
-            'city' => ['required', 'string', 'max:255'],
+            'city_id' => ['required', 'integer', 'exists:cities,id'],
+            'district_id' => ['nullable', 'integer', 'exists:districts,id'],
             'address' => ['required', 'string', 'max:255'],
             'price' => ['required', 'integer', 'min:0'],
             'surface' => ['required', 'integer', 'min:0'],
             'bedrooms' => ['sometimes', 'integer', 'min:0', 'max:255'],
             'bathrooms' => ['sometimes', 'integer', 'min:0', 'max:255'],
             'description' => ['nullable', 'string'],
-            'image' => ['nullable', 'string', 'max:2048'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ];
     }
 }

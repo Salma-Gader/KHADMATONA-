@@ -9,12 +9,20 @@ export type PropertyType =
 
 export type PropertyStatus = "disponible" | "reserve" | "vendu" | "loue";
 
+export interface PropertyImage {
+  id: number;
+  url: string;
+}
+
 export interface Property {
   id: number;
   title: string;
   type: PropertyType;
   status: PropertyStatus;
-  city: string;
+  city_id: number;
+  city_name: string | null;
+  district_id: number | null;
+  district_name: string | null;
   address: string;
   /** In MAD (decimal) - the API converts from stored cents. */
   price: number;
@@ -22,7 +30,8 @@ export interface Property {
   bedrooms: number;
   bathrooms: number;
   description: string | null;
-  image: string | null;
+  images: PropertyImage[];
+  cover_image: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -31,14 +40,16 @@ export interface PropertyFormValues {
   title: string;
   type: PropertyType;
   status: PropertyStatus;
-  city: string;
+  city_id: number | "";
+  district_id: number | "";
   address: string;
   price: number;
   surface: number;
   bedrooms: number;
   bathrooms: number;
   description: string;
-  image: string;
+  /** Newly selected files pending upload - not yet-saved images. */
+  images: File[];
 }
 
 export interface Pagination {
@@ -48,19 +59,23 @@ export interface Pagination {
   total: number;
 }
 
-export const PROPERTY_TYPE_LABELS: Record<PropertyType, string> = {
-  appartement: "Appartement",
-  villa: "Villa",
-  riad: "Riad",
-  maison: "Maison",
-  terrain: "Terrain",
-  bureau: "Bureau",
-  local: "Local commercial",
-};
+// Labels are no longer hardcoded here - PropertyType/PropertyStatus values
+// double as translation keys under the "PropertyType"/"PropertyStatus"
+// message namespaces (messages/{locale}.json), looked up via
+// useTranslations("PropertyType")(type) at each call site.
+export const PROPERTY_TYPES: PropertyType[] = [
+  "appartement",
+  "villa",
+  "riad",
+  "maison",
+  "terrain",
+  "bureau",
+  "local",
+];
 
-export const PROPERTY_STATUS_LABELS: Record<PropertyStatus, string> = {
-  disponible: "Disponible",
-  reserve: "Réservé",
-  vendu: "Vendu",
-  loue: "Loué",
-};
+export const PROPERTY_STATUSES: PropertyStatus[] = [
+  "disponible",
+  "reserve",
+  "vendu",
+  "loue",
+];

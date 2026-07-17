@@ -175,6 +175,9 @@ return [
         'bathrooms' => 'bathrooms',
         'description' => 'description',
         'image' => 'image',
+        'phone' => 'phone number',
+        'message' => 'message',
+        'property_id' => 'related property',
     ],
 
 ];

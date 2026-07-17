@@ -6,6 +6,8 @@ use App\Core\Auth\Http\Controllers\LogoutController;
 use App\Core\Auth\Http\Controllers\MeController;
 use App\Core\Auth\Http\Controllers\RegisterController;
 use App\Core\Auth\Http\Controllers\ResetPasswordController;
+use App\Core\Auth\Http\Controllers\RoleController;
+use App\Core\Auth\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->name('auth.')->group(function () {
@@ -23,4 +25,15 @@ Route::prefix('auth')->name('auth.')->group(function () {
         Route::post('/logout', LogoutController::class)->name('logout');
         Route::get('/me', MeController::class)->name('me');
     });
+});
+
+// Admin management of *other* users' accounts - distinct from the /auth/*
+// group above, which is about the current session only.
+Route::middleware(['auth:sanctum', 'role:Admin'])->group(function () {
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
+    Route::get('/roles', RoleController::class);
 });

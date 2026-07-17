@@ -37,6 +37,9 @@ frontend/dist
 frontend/build
 frontend/.env
 
+# --- production deployment (docker-compose.prod.yml alternative) ---
+.env.prod
+
 # --- OS/editor noise, anywhere in the repo ---
 .DS_Store
 Thumbs.db

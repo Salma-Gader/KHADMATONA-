@@ -293,11 +293,25 @@ Full details, branch naming, commit conventions, and the code review checklist a
 
 ## Deployment
 
-Deployment targets and CI/CD pipeline are not finalized yet. When they are, this section will
-document: the hosting target, the build/release process, required production environment
-variables, queue worker and scheduler process management, and zero-downtime migration strategy.
-Until then, treat `main` as the source of truth for what's deployable, and coordinate any
-production release manually with the team.
+Two documented production paths, both building from the same `Dockerfile.prod` images
+(`backend/Dockerfile.prod`, `frontend/admin/Dockerfile.prod`) — separate from
+`backend/compose.yaml` and `frontend/admin/compose.yaml`, which are local dev only (Sail, and a
+bind-mounted `npm run dev` container respectively) and unaffected by either.
+
+| | Recommended: Coolify | Alternative: plain `docker compose` |
+|---|---|---|
+| Guide | [`COOLIFY_DEPLOYMENT.md`](./COOLIFY_DEPLOYMENT.md) | [`DOCKER_COMPOSE_DEPLOYMENT.md`](./DOCKER_COMPOSE_DEPLOYMENT.md) |
+| Best for | Most deployments — a dashboard, managed MySQL/Redis, auto-deploy-on-push, one-click SSL | Full manual control, an existing CI/CD-driven pipeline, or a VPS that shouldn't run an extra management platform |
+| Reverse proxy / SSL | Coolify's built-in Traefik + automatic Let's Encrypt | This repo's own `docker-compose.prod.yml` + Caddy |
+| Databases | Coolify-managed MySQL/Redis resources | Plain `mysql`/`redis` containers in the same compose file |
+
+**Never run both on the same VPS** — Coolify's proxy and `docker-compose.prod.yml`'s `caddy`
+service both need to bind host ports 80/443 and will conflict. Pick one platform per server; see
+either guide's own warning about this before starting.
+
+**Never commit** real production secrets. `backend/.env` is gitignored; `.env.example` and the
+various `.example`-suffixed templates referenced by both guides are safe to commit and are kept
+up to date with every new non-secret configuration key.
 
 ## License
 

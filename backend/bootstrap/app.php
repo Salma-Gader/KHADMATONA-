@@ -11,6 +11,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Exceptions\UnauthorizedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -29,6 +30,24 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->appendToGroup('api', [
             SetLocale::class,
+        ]);
+
+        // This is an API-only app (CLAUDE.md §2: "no server-rendered public
+        // website in this repository") - there is no named `login` route to
+        // redirect guests to. Without this, Laravel's default Authenticate
+        // middleware calls route('login') for any unauthenticated request
+        // that doesn't explicitly send `Accept: application/json`, which
+        // throws a RouteNotFoundException instead of the intended 401.
+        // Returning null here makes it fall through to AuthenticationException,
+        // already mapped to a clean 401 JSON response below.
+        $middleware->redirectGuestsTo(fn () => null);
+
+        // Registered so admin route groups can require 'role:Admin', not
+        // just 'auth:sanctum' - a self-registered user has no role, and
+        // without this alias every admin endpoint only checked that
+        // *someone* was logged in, not that they were an Admin.
+        $middleware->alias([
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -51,6 +70,17 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (AuthorizationException $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return ApiResponse::error($e->getMessage(), [], 403, 'forbidden');
+            }
+        });
+
+        // Thrown by the 'role:' middleware alias (spatie/laravel-permission)
+        // when an authenticated user lacks the required role - without this,
+        // it fell through to the generic Throwable handler below and either
+        // leaked a raw debug stack trace (local) or misreported a clean 403
+        // as a 500 "Server error" (production).
+        $exceptions->render(function (UnauthorizedException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return ApiResponse::error($e->getMessage(), [], 403, 'forbidden');
             }

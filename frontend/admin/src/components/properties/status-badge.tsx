@@ -1,5 +1,6 @@
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
-import { PROPERTY_STATUS_LABELS, type PropertyStatus } from "@/types/property";
+import type { PropertyStatus } from "@/types/property";
 
 const TONE: Record<PropertyStatus, "success" | "warning" | "info" | "gold"> = {
   disponible: "success",
@@ -9,5 +10,6 @@ const TONE: Record<PropertyStatus, "success" | "warning" | "info" | "gold"> = {
 };
 
 export function PropertyStatusBadge({ status }: { status: PropertyStatus }) {
-  return <Badge tone={TONE[status]}>{PROPERTY_STATUS_LABELS[status]}</Badge>;
+  const t = useTranslations("PropertyStatus");
+  return <Badge tone={TONE[status]}>{t(status)}</Badge>;
 }

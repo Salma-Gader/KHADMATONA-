@@ -29,7 +29,7 @@ export function TableHeaderCell({
   return (
     <th
       className={clsx(
-        "border-b border-border px-4 py-3 text-left text-[0.7rem] font-bold tracking-wide text-text-muted uppercase",
+        "border-b border-border px-4 py-3 text-start text-[0.7rem] font-bold tracking-wide text-text-muted uppercase",
         className,
       )}
     >

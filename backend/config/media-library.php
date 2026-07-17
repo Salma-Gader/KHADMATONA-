@@ -22,9 +22,9 @@ use Spatie\MediaLibrary\ResponsiveImages\Jobs\GenerateResponsiveImagesJob;
 use Spatie\MediaLibrary\ResponsiveImages\TinyPlaceholderGenerator\Blurred;
 use Spatie\MediaLibrary\ResponsiveImages\WidthCalculator\FileSizeOptimizedWidthCalculator;
 use Spatie\MediaLibrary\Support\FileNamer\DefaultFileNamer;
-use Spatie\MediaLibrary\Support\FileRemover\DefaultFileRemover;
+use App\Core\Media\CloudinaryFileRemover;
+use App\Core\Media\CloudinaryUrlGenerator;
 use Spatie\MediaLibrary\Support\PathGenerator\DefaultPathGenerator;
-use Spatie\MediaLibrary\Support\UrlGenerator\DefaultUrlGenerator;
 use Spatie\MediaLibraryPro\Models\TemporaryUpload;
 
 return [
@@ -146,7 +146,7 @@ return [
     /*
      * The class that contains the strategy for determining how to remove files.
      */
-    'file_remover_class' => DefaultFileRemover::class,
+    'file_remover_class' => CloudinaryFileRemover::class,
 
     /*
      * Here you can specify which path generator should be used for the given class.
@@ -161,7 +161,7 @@ return [
      * When urls to files get generated, this class will be called. Use the default
      * if your files are stored locally above the site root or on s3.
      */
-    'url_generator' => DefaultUrlGenerator::class,
+    'url_generator' => CloudinaryUrlGenerator::class,
 
     /*
      * Moves media on updating to keep path consistent. Enable it only with a custom

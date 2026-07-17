@@ -11,6 +11,8 @@ use App\Modules\Property\Http\Requests\UpdatePropertyRequest;
 use App\Modules\Property\Http\Resources\PropertyResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * Simple CRUD only, per the current MVP scope - no Service/Action layer per
@@ -39,9 +41,12 @@ class PropertyController
 
     public function store(StorePropertyRequest $request): JsonResponse
     {
-        $property = $this->properties->create($this->toAttributes($request->validated()));
+        [$attributes, $images] = $this->splitImages($request->validated());
 
-        return ApiResponse::success(new PropertyResource($property), status: 201);
+        $property = $this->properties->create($this->toAttributes($attributes));
+        $this->attachImages($property, $images);
+
+        return ApiResponse::success(new PropertyResource($property->fresh()), status: 201);
     }
 
     public function show(Property $property): JsonResponse
@@ -51,9 +56,12 @@ class PropertyController
 
     public function update(UpdatePropertyRequest $request, Property $property): JsonResponse
     {
-        $property = $this->properties->update($property, $this->toAttributes($request->validated()));
+        [$attributes, $images] = $this->splitImages($request->validated());
 
-        return ApiResponse::success(new PropertyResource($property));
+        $property = $this->properties->update($property, $this->toAttributes($attributes));
+        $this->attachImages($property, $images);
+
+        return ApiResponse::success(new PropertyResource($property->fresh()));
     }
 
     public function destroy(Property $property): JsonResponse
@@ -61,6 +69,44 @@ class PropertyController
         $this->properties->delete($property);
 
         return ApiResponse::success();
+    }
+
+    /**
+     * Removes a single photo from a property's gallery without touching
+     * the rest of the record - route-model-bound Media must actually
+     * belong to the given Property, otherwise this 404s (implicit scoping
+     * via the route's {property}/{media} nesting, checked explicitly here
+     * since Spatie's Media model has no built-in route-scoping support).
+     */
+    public function destroyImage(Property $property, Media $media): JsonResponse
+    {
+        abort_unless($media->model_type === Property::class && $media->model_id === $property->id, 404);
+
+        $media->delete();
+
+        return ApiResponse::success();
+    }
+
+    /**
+     * @param  array<string, mixed>  $validated
+     * @return array{0: array<string, mixed>, 1: array<int, UploadedFile>}
+     */
+    private function splitImages(array $validated): array
+    {
+        $images = $validated['images'] ?? [];
+        unset($validated['images']);
+
+        return [$validated, $images];
+    }
+
+    /**
+     * @param  array<int, UploadedFile>  $images
+     */
+    private function attachImages(Property $property, array $images): void
+    {
+        foreach ($images as $image) {
+            $property->addMedia($image)->toMediaCollection('gallery');
+        }
     }
 
     /**
