@@ -100,6 +100,8 @@ export default function PropertyDetailPage({
               images={property.images}
               title={property.title}
               noImageLabel={propertyDetail("noImage")}
+              previousImageLabel={propertyDetail("previousImage")}
+              nextImageLabel={propertyDetail("nextImage")}
             />
           </div>
           <p className="mb-2 text-[0.7rem] font-bold tracking-wide text-text-muted uppercase">

@@ -89,6 +89,8 @@ function PropertyDetailContent({ property }: { property: Awaited<ReturnType<type
             images={property.images}
             title={property.title}
             noImageLabel={t("noImage")}
+            previousImageLabel={t("previousImage")}
+            nextImageLabel={t("nextImage")}
           />
 
           <Card radius="md">

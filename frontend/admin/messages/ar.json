@@ -110,6 +110,8 @@
     "description": "الوصف",
     "noDescription": "لا يوجد وصف متاح لهذا العقار.",
     "noImage": "لا توجد صورة متاحة",
+  "previousImage": "الصورة السابقة",
+  "nextImage": "الصورة التالية",
     "addressPublished": "العنوان: {address} · نُشر بتاريخ {date}",
     "visitRequestTitle": "طلب زيارة",
     "requestVisit": "طلب زيارة",

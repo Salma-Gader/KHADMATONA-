@@ -110,6 +110,8 @@
     "description": "Description",
     "noDescription": "No description available for this property.",
     "noImage": "No image available",
+  "previousImage": "Previous photo",
+  "nextImage": "Next photo",
     "addressPublished": "Address: {address} · Published on {date}",
     "visitRequestTitle": "Visit request",
     "requestVisit": "Request a visit",
