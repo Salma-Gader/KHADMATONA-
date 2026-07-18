@@ -27,10 +27,10 @@ FROM php:8.4-fpm-alpine
 # loading shared library". Installing the runtime libs explicitly first
 # keeps them in apk's "world" list, so the later `apk del .build-deps`
 # only removes the -dev headers/tooling, never these.
-RUN apk add --no-cache nginx supervisor libpng libjpeg-turbo freetype libzip icu-libs oniguruma \
+RUN apk add --no-cache nginx supervisor libpng libjpeg-turbo freetype libzip icu-libs oniguruma libwebp \
     && apk add --no-cache --virtual .build-deps \
-    libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev icu-dev oniguruma-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev icu-dev oniguruma-dev libwebp-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j"$(nproc)" pdo_mysql mbstring bcmath exif gd intl zip opcache pcntl \
     && apk del .build-deps \
     && mkdir -p /var/log/supervisor /run/nginx
