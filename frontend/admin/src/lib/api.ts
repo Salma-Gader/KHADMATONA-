@@ -147,6 +147,9 @@ async function requestEnvelope<T>(
   if (isMutating) {
     const token = readCookie("XSRF-TOKEN");
     if (token) headers.set("X-XSRF-TOKEN", token);
+    console.log("document.cookie =", document.cookie);
+    console.log("XSRF token =", token);
+    console.log("Headers =", Object.fromEntries(headers.entries()));
   }
   // This module is called both from the browser and from Server Components
   // during SSR (e.g. the homepage's listProperties()/getSettings()) -
@@ -237,3 +240,5 @@ export const api = {
     return request<T>(path, { method: "POST", body });
   },
 };
+
+
