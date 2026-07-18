@@ -17,7 +17,11 @@ class EloquentPostRepository extends BaseRepository implements PostRepositoryInt
 
     public function paginateForAudience(bool $includeDrafts, int $perPage): LengthAwarePaginator
     {
-        $query = Post::query()->latest('published_at');
+        // PostResource::toArray() calls getFirstMediaUrl('cover', ...) on
+        // every post - eager-loading media here is what keeps that from
+        // firing one extra query per post in the list (mirrors
+        // PropertyFilter's identical rationale for Property's media).
+        $query = Post::query()->with('media')->latest('published_at');
 
         if (! $includeDrafts) {
             $query->where('status', PostStatus::Published)->where('published_at', '<=', now());

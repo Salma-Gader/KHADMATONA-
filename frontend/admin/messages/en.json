@@ -2,6 +2,7 @@
   "Nav": {
     "home": "Home",
     "properties": "Properties",
+    "blog": "Blog",
     "services": "Services",
     "about": "About",
     "contact": "Contact",
@@ -110,8 +111,8 @@
     "description": "Description",
     "noDescription": "No description available for this property.",
     "noImage": "No image available",
-  "previousImage": "Previous photo",
-  "nextImage": "Next photo",
+    "previousImage": "Previous photo",
+    "nextImage": "Next photo",
     "addressPublished": "Address: {address} · Published on {date}",
     "visitRequestTitle": "Visit request",
     "requestVisit": "Request a visit",
@@ -131,6 +132,20 @@
     "reserve": "Reserved",
     "vendu": "Sold",
     "loue": "Rented"
+  },
+  "Blog": {
+    "title": "Blog",
+    "subtitle": "News, guides, and insights from the KHADMATONA team.",
+    "loading": "Loading articles…",
+    "noResultsTitle": "No articles yet",
+    "noResultsSubtitle": "Check back soon for news and guides."
+  },
+  "BlogDetail": {
+    "backToList": "← Back to blog"
+  },
+  "PostStatus": {
+    "draft": "Draft",
+    "published": "Published"
   },
   "Services": {
     "title": "Our services",
@@ -216,6 +231,7 @@
   "Dashboard": {
     "overview": "Overview",
     "properties": "Properties",
+    "blog": "Blog",
     "leads": "Leads",
     "contactMessages": "Contact messages",
     "saleRequests": "Sale requests",
@@ -343,6 +359,44 @@
     "citiesLoadError": "Couldn't load the list of cities.",
     "districtsLoadError": "Couldn't load the list of districts.",
     "imageDeleteError": "Deleting the photo failed."
+  },
+  "DashboardBlog": {
+    "title": "Blog",
+    "subtitle": "Manage the list of articles.",
+    "addPost": "Add an article",
+    "genericError": "Something went wrong.",
+    "noResultsTitle": "No articles found",
+    "noResultsEmpty": "Start by adding an article.",
+    "titleColumn": "Title",
+    "status": "Status",
+    "publishedAt": "Published on",
+    "actions": "Actions",
+    "edit": "Edit",
+    "deleting": "Deleting…",
+    "delete": "Delete",
+    "confirmDelete": "Delete the article \"{title}\"?",
+    "deleteError": "Deletion failed.",
+    "newTitle": "Add an article",
+    "newSubtitle": "Write a new blog article.",
+    "createSubmit": "Create article",
+    "editTitle": "Edit article",
+    "editSubmit": "Save changes",
+    "loading": "Loading…",
+    "notFound": "Article not found.",
+    "loadError": "Couldn't load this article."
+  },
+  "PostForm": {
+    "title": "Title",
+    "slug": "Slug",
+    "slugHint": "Leave blank to auto-generate from the title.",
+    "excerpt": "Excerpt",
+    "body": "Body",
+    "bodyHint": "Written in Markdown - headings, lists, links, and bold/italic text are all supported.",
+    "status": "Status",
+    "publishedAt": "Publish date",
+    "publishedAtHint": "Leave blank to publish immediately when status is set to Published.",
+    "coverImage": "Cover image",
+    "genericError": "Something went wrong. Please try again."
   },
   "DashboardLeads": {
     "searchPlaceholder": "Search by name or email…",

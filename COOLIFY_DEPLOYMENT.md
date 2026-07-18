@@ -222,7 +222,7 @@ CLOUDINARY_API_KEY=<real value>
 CLOUDINARY_API_SECRET=<real value>
 
 CACHE_STORE=redis
-REDIS_CLIENT=phpredis
+REDIS_CLIENT=predis
 REDIS_HOST=<internal hostname from step 6>
 REDIS_PASSWORD=<password from step 6, or null if none>
 REDIS_PORT=<port from step 6, usually 6379>
@@ -479,6 +479,12 @@ If login still doesn't stick after checking the two settings above:
 
 ### Redis connection issues
 
+- **Symptom:** `Class "Redis" not found` on any request or artisan command that touches Redis
+  (migrations that seed cache/queue tables, queue workers, cache reads).
+  **Fix:** `REDIS_CLIENT` must be `predis`, not `phpredis` — `backend/Dockerfile.prod` doesn't
+  compile the phpredis PECL extension in; `predis/predis` (already a `composer.json` dependency,
+  pure PHP, no extension needed) is what this image actually supports, and what local dev uses
+  too.
 - **Symptom:** `Connection refused` or `getaddrinfo failed` in the backend logs; queued jobs
   never process; cache-dependent pages error out.
   **Fix:** double check `REDIS_HOST` is the **internal hostname Coolify generated** for the

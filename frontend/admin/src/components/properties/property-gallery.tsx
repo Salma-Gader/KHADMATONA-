@@ -56,10 +56,12 @@ export function PropertyGallery({
     <div>
       <div className="group relative aspect-video overflow-hidden rounded-md bg-surface-muted">
         {active ? (
-          // eslint-disable-next-line @next/next/no-img-element -- media-library-served image
+          // eslint-disable-next-line @next/next/no-img-element -- media-library-served image, this is the property detail page's LCP element
           <img
             src={active.url}
             alt={title}
+            fetchPriority="high"
+            decoding="async"
             className="h-full w-full object-cover"
           />
         ) : (
@@ -111,7 +113,13 @@ export function PropertyGallery({
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element -- media-library-served thumbnail */}
-                <img src={image.url} alt="" className="h-full w-full object-cover" />
+                <img
+                  src={image.url}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
               </button>
             );
           })}

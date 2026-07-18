@@ -74,6 +74,16 @@ function PropertiesNavIcon({ className }: { className?: string }) {
   );
 }
 
+function BlogNavIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={1.7}>
+      <path d="M5 4.5h9.5L19 9v10.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-14a1 1 0 0 1 1-1Z" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14.5 4.5V9H19" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 12.5h8M8 16h5.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function ServicesNavIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth={1.7}>
@@ -112,6 +122,7 @@ export function SiteHeader() {
   const items: NavItem[] = [
     { href: "/", label: t("home"), icon: HomeNavIcon },
     { href: "/properties", label: t("properties"), icon: PropertiesNavIcon },
+    { href: "/blog", label: t("blog"), icon: BlogNavIcon },
     { href: "/services", label: t("services"), icon: ServicesNavIcon },
     { href: "/about", label: t("about"), icon: AboutNavIcon },
     { href: "/contact", label: t("contact"), icon: ContactNavIcon },

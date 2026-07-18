@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { HeroSearch } from "@/components/home/hero-search";
 
 const HERO_IMAGE = "https://i.pinimg.com/736x/a0/2b/12/a02b127d48169547a14bd9b54ad7b0a2.jpg";
@@ -20,11 +21,18 @@ export function Hero({
       {/* Background photograph - slow one-way zoom for a cinematic,
           unobtrusive sense of motion (holds at the zoomed frame, no loop). */}
       <div className="absolute inset-0">
-        {/* eslint-disable-next-line @next/next/no-img-element -- external hero photograph, no local optimization pipeline for it */}
-        <img
+        {/* This is the page's LCP element - `priority` makes next/image emit
+           a <link rel="preload"> for it and skip lazy-loading; `unoptimized`
+           skips Next's own re-encode pass since a hotlinked photo doesn't
+           benefit from it the way a self-hosted asset would. */}
+        <Image
           src={HERO_IMAGE}
           alt=""
-          className="h-full w-full object-cover animate-hero-zoom"
+          fill
+          priority
+          unoptimized
+          sizes="100vw"
+          className="object-cover animate-hero-zoom"
         />
       </div>
 

@@ -100,6 +100,16 @@ function CloseIcon() {
   );
 }
 
+function NewspaperIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8}>
+      <path d="M5 4.5h9.5L19 9v10.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-14a1 1 0 0 1 1-1Z" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14.5 4.5V9H19" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 12.5h8M8 16h5.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function renderItem(
   item: NavItem,
   pathname: string,
@@ -159,6 +169,7 @@ export function Sidebar({
   const items: NavItem[] = [
     { href: "/dashboard", label: t("overview"), icon: <HomeIcon /> },
     { href: "/dashboard/properties", label: t("properties"), icon: <BuildingIcon /> },
+    { href: "/dashboard/blog", label: t("blog"), icon: <NewspaperIcon /> },
   ];
 
   const leadItems: NavItem[] = [

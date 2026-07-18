@@ -15,11 +15,24 @@ RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
 
 FROM php:8.4-fpm-alpine
 
-RUN apk add --no-cache nginx supervisor \
+# Runtime shared libs (libpng, libjpeg-turbo, freetype, libzip, icu-libs,
+# oniguruma) are installed as their own explicit, non-virtual packages -
+# NOT just pulled in as automatic dependencies of the -dev packages below.
+# Alpine's apk tracks compiled .so dependencies (gd.so, intl.so, zip.so
+# linking against these at runtime) completely separately from its own
+# package graph, so `apk del <name>-dev` silently removes a runtime lib too
+# if apk considers it an orphaned auto-dependency with nothing left
+# referencing it - which is exactly what happened here before this comment
+# existed: gd/intl/zip all failed to load at container start with "Error
+# loading shared library". Installing the runtime libs explicitly first
+# keeps them in apk's "world" list, so the later `apk del .build-deps`
+# only removes the -dev headers/tooling, never these.
+RUN apk add --no-cache nginx supervisor libpng libjpeg-turbo freetype libzip icu-libs oniguruma \
+    && apk add --no-cache --virtual .build-deps \
     libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev icu-dev oniguruma-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" pdo_mysql mbstring bcmath exif gd intl zip opcache pcntl \
-    && apk del libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev icu-dev oniguruma-dev \
+    && apk del .build-deps \
     && mkdir -p /var/log/supervisor /run/nginx
 
 WORKDIR /var/www/html

@@ -4,6 +4,7 @@ namespace App\Modules\Settings\Domain\Models;
 
 use App\Core\Localization\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
@@ -48,12 +49,20 @@ class Setting extends Model
         'social_whatsapp',
     ];
 
+    /** Cache key used here and by EloquentSettingRepository::updateCurrent()'s invalidation. */
+    public const CACHE_KEY = 'settings.current';
+
     /**
      * There is always exactly one settings row - callers never look it up
-     * by id, they just want "the" settings.
+     * by id, they just want "the" settings. Read on nearly every public
+     * page load (site-wide contact info, social links, homepage hero
+     * text/stats), so it's cached - see updateCurrent() for invalidation.
      */
     public static function current(): self
     {
-        return static::query()->with('translations')->first() ?? static::create();
+        return Cache::rememberForever(
+            self::CACHE_KEY,
+            fn () => static::query()->with('translations')->first() ?? static::create(),
+        );
     }
 }

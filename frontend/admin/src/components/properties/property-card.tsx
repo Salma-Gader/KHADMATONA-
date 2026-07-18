@@ -57,10 +57,12 @@ export function PropertyCard({ property }: { property: Property }) {
     >
       <div className="relative h-56 overflow-hidden bg-gradient-to-br from-charcoal to-ink">
         {property.cover_image && (
-          // eslint-disable-next-line @next/next/no-img-element -- media-library-served thumbnail
+          // eslint-disable-next-line @next/next/no-img-element -- media-library-served thumbnail, already f_auto/q_auto-optimized by Cloudinary
           <img
             src={property.cover_image}
             alt={property.title}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         )}

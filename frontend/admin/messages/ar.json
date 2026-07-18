@@ -2,6 +2,7 @@
   "Nav": {
     "home": "الرئيسية",
     "properties": "العقارات",
+    "blog": "المدونة",
     "services": "الخدمات",
     "about": "من نحن",
     "contact": "اتصل بنا",
@@ -110,8 +111,8 @@
     "description": "الوصف",
     "noDescription": "لا يوجد وصف متاح لهذا العقار.",
     "noImage": "لا توجد صورة متاحة",
-  "previousImage": "الصورة السابقة",
-  "nextImage": "الصورة التالية",
+    "previousImage": "الصورة السابقة",
+    "nextImage": "الصورة التالية",
     "addressPublished": "العنوان: {address} · نُشر بتاريخ {date}",
     "visitRequestTitle": "طلب زيارة",
     "requestVisit": "طلب زيارة",
@@ -131,6 +132,20 @@
     "reserve": "محجوز",
     "vendu": "مباع",
     "loue": "مكترى"
+  },
+  "Blog": {
+    "title": "المدونة",
+    "subtitle": "أخبار وأدلة ونصائح من فريق خدماتنا.",
+    "loading": "جارٍ تحميل المقالات…",
+    "noResultsTitle": "لا توجد مقالات بعد",
+    "noResultsSubtitle": "عودوا قريبًا لمتابعة الأخبار والأدلة."
+  },
+  "BlogDetail": {
+    "backToList": "→ العودة إلى المدونة"
+  },
+  "PostStatus": {
+    "draft": "مسودة",
+    "published": "منشور"
   },
   "Services": {
     "title": "خدماتنا",
@@ -216,6 +231,7 @@
   "Dashboard": {
     "overview": "نظرة عامة",
     "properties": "العقارات",
+    "blog": "المدونة",
     "leads": "الطلبات",
     "contactMessages": "رسائل التواصل",
     "saleRequests": "طلبات البيع",
@@ -343,6 +359,44 @@
     "citiesLoadError": "تعذر تحميل قائمة المدن.",
     "districtsLoadError": "تعذر تحميل قائمة الأحياء.",
     "imageDeleteError": "فشل حذف الصورة."
+  },
+  "DashboardBlog": {
+    "title": "المدونة",
+    "subtitle": "إدارة قائمة المقالات.",
+    "addPost": "إضافة مقالة",
+    "genericError": "حدث خطأ ما.",
+    "noResultsTitle": "لا توجد مقالات",
+    "noResultsEmpty": "ابدأ بإضافة مقالة.",
+    "titleColumn": "العنوان",
+    "status": "الحالة",
+    "publishedAt": "تاريخ النشر",
+    "actions": "إجراءات",
+    "edit": "تعديل",
+    "deleting": "جارٍ الحذف…",
+    "delete": "حذف",
+    "confirmDelete": "حذف المقالة \"{title}\"؟",
+    "deleteError": "فشل الحذف.",
+    "newTitle": "إضافة مقالة",
+    "newSubtitle": "اكتب مقالة جديدة للمدونة.",
+    "createSubmit": "إنشاء المقالة",
+    "editTitle": "تعديل المقالة",
+    "editSubmit": "حفظ التغييرات",
+    "loading": "جارٍ التحميل…",
+    "notFound": "المقالة غير موجودة.",
+    "loadError": "تعذر تحميل هذه المقالة."
+  },
+  "PostForm": {
+    "title": "العنوان",
+    "slug": "الرابط المختصر",
+    "slugHint": "اتركه فارغًا لإنشائه تلقائيًا من العنوان.",
+    "excerpt": "مقتطف",
+    "body": "المحتوى",
+    "bodyHint": "يُكتب بصيغة Markdown - العناوين والقوائم والروابط والنص الغامق/المائل كلها مدعومة.",
+    "status": "الحالة",
+    "publishedAt": "تاريخ النشر",
+    "publishedAtHint": "اتركه فارغًا للنشر فورًا عند ضبط الحالة على منشور.",
+    "coverImage": "صورة الغلاف",
+    "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
   },
   "DashboardLeads": {
     "searchPlaceholder": "البحث بالاسم أو البريد الإلكتروني…",

@@ -2,6 +2,7 @@
   "Nav": {
     "home": "Accueil",
     "properties": "Biens",
+    "blog": "Blog",
     "services": "Services",
     "about": "À propos",
     "contact": "Contact",
@@ -110,8 +111,8 @@
     "description": "Description",
     "noDescription": "Aucune description disponible pour ce bien.",
     "noImage": "Aucune image disponible",
-  "previousImage": "Photo précédente",
-  "nextImage": "Photo suivante",
+    "previousImage": "Photo précédente",
+    "nextImage": "Photo suivante",
     "addressPublished": "Adresse : {address} · Publié le {date}",
     "visitRequestTitle": "Demande de visite",
     "requestVisit": "Demander une visite",
@@ -131,6 +132,20 @@
     "reserve": "Réservé",
     "vendu": "Vendu",
     "loue": "Loué"
+  },
+  "Blog": {
+    "title": "Blog",
+    "subtitle": "Actualités, guides et conseils de l'équipe KHADMATONA.",
+    "loading": "Chargement des articles…",
+    "noResultsTitle": "Aucun article pour le moment",
+    "noResultsSubtitle": "Revenez bientôt pour des actualités et des guides."
+  },
+  "BlogDetail": {
+    "backToList": "← Retour au blog"
+  },
+  "PostStatus": {
+    "draft": "Brouillon",
+    "published": "Publié"
   },
   "Services": {
     "title": "Nos services",
@@ -216,6 +231,7 @@
   "Dashboard": {
     "overview": "Aperçu",
     "properties": "Propriétés",
+    "blog": "Blog",
     "leads": "Demandes",
     "contactMessages": "Messages de contact",
     "saleRequests": "Demandes de vente",
@@ -343,6 +359,44 @@
     "citiesLoadError": "Impossible de charger la liste des villes.",
     "districtsLoadError": "Impossible de charger la liste des quartiers.",
     "imageDeleteError": "La suppression de la photo a échoué."
+  },
+  "DashboardBlog": {
+    "title": "Blog",
+    "subtitle": "Gérer la liste des articles.",
+    "addPost": "Ajouter un article",
+    "genericError": "Une erreur est survenue.",
+    "noResultsTitle": "Aucun article trouvé",
+    "noResultsEmpty": "Commencez par ajouter un article.",
+    "titleColumn": "Titre",
+    "status": "Statut",
+    "publishedAt": "Publié le",
+    "actions": "Actions",
+    "edit": "Modifier",
+    "deleting": "Suppression…",
+    "delete": "Supprimer",
+    "confirmDelete": "Supprimer l'article « {title} » ?",
+    "deleteError": "La suppression a échoué.",
+    "newTitle": "Ajouter un article",
+    "newSubtitle": "Rédigez un nouvel article de blog.",
+    "createSubmit": "Créer l'article",
+    "editTitle": "Modifier l'article",
+    "editSubmit": "Enregistrer les modifications",
+    "loading": "Chargement…",
+    "notFound": "Article introuvable.",
+    "loadError": "Impossible de charger cet article."
+  },
+  "PostForm": {
+    "title": "Titre",
+    "slug": "Slug",
+    "slugHint": "Laissez vide pour générer automatiquement à partir du titre.",
+    "excerpt": "Extrait",
+    "body": "Contenu",
+    "bodyHint": "Rédigé en Markdown - titres, listes, liens et texte gras/italique sont pris en charge.",
+    "status": "Statut",
+    "publishedAt": "Date de publication",
+    "publishedAtHint": "Laissez vide pour publier immédiatement lorsque le statut est Publié.",
+    "coverImage": "Image de couverture",
+    "genericError": "Une erreur est survenue. Veuillez réessayer."
   },
   "DashboardLeads": {
     "searchPlaceholder": "Rechercher par nom ou email…",
