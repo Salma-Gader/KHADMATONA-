@@ -38,7 +38,12 @@ RUN apk add --no-cache nginx supervisor libpng libjpeg-turbo freetype libzip icu
 WORKDIR /var/www/html
 COPY --from=vendor /app ./
 
-RUN chown -R www-data:www-data storage bootstrap/cache
+RUN mkdir -p \
+    storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+ && chown -R www-data:www-data storage bootstrap/cache
 
 COPY docker/nginx/app.conf /etc/nginx/http.d/default.conf
 COPY docker/supervisor/production.conf /etc/supervisord.conf
