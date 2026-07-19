@@ -1,4 +1,18 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost";
+/**
+ * Server-side requests (SSR) call the backend directly via its real URL -
+ * no browser is involved, so there's nothing to proxy. Client-side (browser)
+ * requests are deliberately relative (empty prefix) instead: they're routed
+ * through this app's own vercel.json rewrites to the backend, so the
+ * browser sees them as same-origin. That's what makes Sanctum's
+ * cookie-based SPA auth work when the frontend (Vercel) and backend
+ * (Render) are on unrelated domains with no shared parent domain to set
+ * SESSION_DOMAIN to - without the proxy, the backend's Set-Cookie responses
+ * would be silently rejected by the browser as cross-site.
+ */
+function resolveApiUrl(): string {
+  if (typeof document !== "undefined") return "";
+  return process.env.NEXT_PUBLIC_API_URL ?? "http://localhost";
+}
 
 // No `fetch()` call may run longer than this. Without a bound, a slow or
 // unresponsive API leaves callers (e.g. AuthProvider's initial /auth/me
@@ -119,7 +133,7 @@ async function fetchWithTimeout(
 
 async function ensureCsrfCookie(force = false): Promise<void> {
   if (!force && readCookie("XSRF-TOKEN")) return;
-  await fetchWithTimeout(`${API_URL}/sanctum/csrf-cookie`, {
+  await fetchWithTimeout(`${resolveApiUrl()}/sanctum/csrf-cookie`, {
     credentials: "include",
   });
 }
@@ -165,7 +179,7 @@ async function requestEnvelope<T>(
       : await resolveServerLocale();
   if (locale) headers.set("Accept-Language", locale);
 
-  const response = await fetchWithTimeout(`${API_URL}${path}`, {
+  const response = await fetchWithTimeout(`${resolveApiUrl()}${path}`, {
     ...options,
     headers,
     credentials: "include",

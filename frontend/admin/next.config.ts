@@ -30,6 +30,19 @@ const nextConfig: NextConfig = {
     // showing up. See node_modules/next/dist/docs/.../serverComponentsHmrCache.md.
     serverComponentsHmrCache: false,
   },
+  // Mirrors vercel.json's rewrites for `next dev`/self-hosted `next start`,
+  // neither of which read vercel.json - without this, lib/api.ts's browser
+  // requests (deliberately relative, see resolveApiUrl()'s docblock) would
+  // 404 locally since there's no proxy without it. Keeps local dev and the
+  // deployed-on-Vercel case behave identically: the browser always talks to
+  // its own origin, same-site cookies work the same way in both.
+  async rewrites() {
+    const backend = process.env.NEXT_PUBLIC_API_URL || "http://localhost";
+    return [
+      { source: "/sanctum/:path*", destination: `${backend}/sanctum/:path*` },
+      { source: "/api/:path*", destination: `${backend}/api/:path*` },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);
