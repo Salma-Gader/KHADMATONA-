@@ -37,3 +37,22 @@ Route::middleware(['auth:sanctum', 'role:Admin'])->group(function () {
     Route::delete('/users/{user}', [UserController::class, 'destroy']);
     Route::get('/roles', RoleController::class);
 });
+
+// TEMPORARY - bootstraps the first Admin on a deploy target with no shell
+// access (e.g. Render's free tier). Promotes one already-registered user
+// (via POST /auth/register) to Admin, gated by a one-off secret compared
+// with hash_equals(). DELETE THIS ROUTE right after using it once - it has
+// no other access control and the secret lives in plain text below only
+// because the route itself is meant to exist for minutes, not stay in the
+// codebase.
+Route::post('/_temp/promote-admin', function (\Illuminate\Http\Request $request) {
+    abort_unless(
+        hash_equals('b13d5490f28de7cd74815fe3ef16fbbf6dce0e628d32dfc6f40a0451a8b0a3cc', (string) $request->header('X-Admin-Secret', '')),
+        403,
+    );
+
+    $user = \App\Models\User::where('email', $request->string('email'))->firstOrFail();
+    $user->assignRole('Admin');
+
+    return response()->json(['promoted' => $user->email]);
+});
