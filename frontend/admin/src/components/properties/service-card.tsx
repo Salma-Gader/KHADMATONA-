@@ -17,7 +17,7 @@ export function ServiceCard({
   return (
     <Card interactive radius="md" className="group h-full hover:border-gold-primary/40">
       {icon ? (
-        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-gold-primary/10 text-gold-primary transition-colors group-hover:bg-gold-primary group-hover:text-ink">
+        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-gold-primary/10 text-gold-primary transition-colors group-hover:bg-gold-primary group-hover:text-white">
           {icon}
         </span>
       ) : (

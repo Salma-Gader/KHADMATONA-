@@ -27,7 +27,7 @@ export default function ProfilePage() {
 
       <Card className="w-full max-w-xl">
         <div className="mb-5 flex items-center gap-4">
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gold-primary font-mono text-lg font-bold text-ink">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gold-primary font-mono text-lg font-bold text-white">
             {user.name
               .split(" ")
               .map((part) => part[0])

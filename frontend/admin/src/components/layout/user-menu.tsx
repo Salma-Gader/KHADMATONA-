@@ -56,7 +56,7 @@ export function UserMenu() {
         aria-expanded={open}
         className="flex items-center gap-2.5 rounded-full py-1 ps-1 pe-3 text-sm font-semibold text-text hover:bg-surface-muted"
       >
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-primary font-mono text-xs font-bold text-ink">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-primary font-mono text-xs font-bold text-white">
           {initials(user.name)}
         </span>
         <span className="hidden sm:inline">{user.name}</span>

@@ -92,7 +92,7 @@ export function PropertyTypeGrid() {
             href={`/properties?type=${type}`}
             className="group flex flex-col items-center gap-3 rounded-md border border-border bg-surface p-5 text-center shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-gold-primary/40 hover:shadow-lg"
           >
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gold-primary/10 text-gold-primary transition-colors group-hover:bg-gold-primary group-hover:text-ink">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gold-primary/10 text-gold-primary transition-colors group-hover:bg-gold-primary group-hover:text-white">
               <Icon />
             </span>
             <span className="text-[0.85rem] font-semibold text-text">{propertyType(type)}</span>
