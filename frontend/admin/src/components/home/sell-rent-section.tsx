@@ -18,7 +18,7 @@ export function SellRentSection() {
           className={clsx(
             "flex-1 rounded-sm px-4 py-2.5 text-sm font-bold transition-colors",
             mode === "sell_request"
-              ? "bg-gold-primary text-ink shadow-sm"
+              ? "bg-gold-primary text-white shadow-sm"
               : "text-text-muted hover:text-text",
           )}
         >
@@ -30,7 +30,7 @@ export function SellRentSection() {
           className={clsx(
             "flex-1 rounded-sm px-4 py-2.5 text-sm font-bold transition-colors",
             mode === "rent_request"
-              ? "bg-gold-primary text-ink shadow-sm"
+              ? "bg-gold-primary text-white shadow-sm"
               : "text-text-muted hover:text-text",
           )}
         >

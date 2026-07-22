@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
+import { PencilIcon, TrashIcon } from "@/components/ui/action-icons";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { deleteUser, listUsers } from "@/lib/users";
@@ -130,21 +131,25 @@ export default function UsersListPage() {
                   </TableCell>
                   <TableCell>{dateFormatter.format(new Date(user.created_at))}</TableCell>
                   <TableCell>
-                    <div className="flex justify-end gap-3 text-[0.82rem] font-semibold">
+                    <div className="flex justify-end gap-1">
                       <Link
                         href={`/dashboard/users/${user.id}/edit`}
-                        className="text-gold-primary hover:underline"
+                        title={t("edit")}
+                        aria-label={t("edit")}
+                        className="rounded-md p-2 text-text-muted hover:bg-surface-muted hover:text-gold-primary"
                       >
-                        {t("edit")}
+                        <PencilIcon />
                       </Link>
                       {currentUser?.id !== user.id && (
                         <button
                           type="button"
                           onClick={() => handleDelete(user)}
                           disabled={deletingId === user.id}
-                          className="text-error hover:underline disabled:opacity-50"
+                          title={deletingId === user.id ? t("deleting") : t("delete")}
+                          aria-label={deletingId === user.id ? t("deleting") : t("delete")}
+                          className="rounded-md p-2 text-text-muted hover:bg-error/10 hover:text-error disabled:opacity-50"
                         >
-                          {deletingId === user.id ? t("deleting") : t("delete")}
+                          <TrashIcon />
                         </button>
                       )}
                     </div>

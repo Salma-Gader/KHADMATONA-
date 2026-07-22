@@ -117,7 +117,7 @@ export default function PropertyDetailPage({
             {t("details")}
           </p>
           <dl className="flex flex-col gap-3 text-sm">
-            <Row label={t("price")} value={`${currencyFormatter.format(property.price)} MAD`} />
+            <Row label={t("price")} value={`${currencyFormatter.format(property.price)} DH`} />
             <Row
               label={t("city")}
               value={

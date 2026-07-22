@@ -79,7 +79,7 @@ function PropertyDetailContent({ property }: { property: Awaited<ReturnType<type
         </div>
         <p className="font-mono text-2xl font-semibold tabular-nums text-text" dir="ltr">
           {currencyFormatter.format(property.price)}{" "}
-          <span className="text-sm font-semibold text-text-muted">MAD</span>
+          <span className="text-sm font-semibold text-text-muted">DH</span>
         </p>
       </div>
 

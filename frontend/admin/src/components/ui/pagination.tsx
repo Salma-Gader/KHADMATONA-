@@ -41,7 +41,7 @@ export function Pagination({
               className={clsx(
                 "h-8 w-8 rounded-sm border font-mono text-[0.78rem]",
                 page === current
-                  ? "border-gold-primary bg-gold-primary font-bold text-ink"
+                  ? "border-gold-primary bg-gold-primary font-bold text-white"
                   : "border-border-strong bg-surface text-text",
               )}
             >

@@ -59,7 +59,7 @@ export function LocaleSwitcher({
           className={clsx(
             "rounded-full px-2.5 py-1 transition-colors",
             item.code === locale
-              ? "bg-gold-primary text-ink"
+              ? "bg-gold-primary text-white"
               : variant === "onDark"
                 ? "text-white/70 hover:text-white"
                 : variant === "onLight"

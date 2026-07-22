@@ -74,7 +74,7 @@ export function PropertyCard({ property }: { property: Property }) {
       <div className="flex flex-1 flex-col gap-1.5 p-6">
         <div className="font-mono text-xl font-bold tabular-nums text-gold-primary" dir="ltr">
           {currencyFormatter.format(property.price)}{" "}
-          <span className="text-[0.68rem] font-semibold text-text-muted">MAD</span>
+          <span className="text-[0.68rem] font-semibold text-text-muted">DH</span>
         </div>
         <p className="truncate font-display text-lg font-semibold text-text">{property.title}</p>
         <p className="flex items-center gap-1.5 text-[0.82rem] text-text-muted">

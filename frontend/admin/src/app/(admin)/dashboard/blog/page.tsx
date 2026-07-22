@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { PostStatusBadge } from "@/components/blog/post-status-badge";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
+import { PencilIcon, TrashIcon } from "@/components/ui/action-icons";
 import { ApiError } from "@/lib/api";
 import { deletePost, listPosts } from "@/lib/blog";
 import type { Pagination as PaginationData } from "@/types/property";
@@ -125,20 +126,24 @@ export default function BlogListPage() {
                     {post.published_at ? dateFormatter.format(new Date(post.published_at)) : "—"}
                   </TableCell>
                   <TableCell>
-                    <div className="flex justify-end gap-3 text-[0.82rem] font-semibold">
+                    <div className="flex justify-end gap-1">
                       <Link
                         href={`/dashboard/blog/${post.slug}/edit`}
-                        className="text-gold-primary hover:underline"
+                        title={t("edit")}
+                        aria-label={t("edit")}
+                        className="rounded-md p-2 text-text-muted hover:bg-surface-muted hover:text-gold-primary"
                       >
-                        {t("edit")}
+                        <PencilIcon />
                       </Link>
                       <button
                         type="button"
                         onClick={() => handleDelete(post)}
                         disabled={deletingId === post.id}
-                        className="text-error hover:underline disabled:opacity-50"
+                        title={deletingId === post.id ? t("deleting") : t("delete")}
+                        aria-label={deletingId === post.id ? t("deleting") : t("delete")}
+                        className="rounded-md p-2 text-text-muted hover:bg-error/10 hover:text-error disabled:opacity-50"
                       >
-                        {deletingId === post.id ? t("deleting") : t("delete")}
+                        <TrashIcon />
                       </button>
                     </div>
                   </TableCell>

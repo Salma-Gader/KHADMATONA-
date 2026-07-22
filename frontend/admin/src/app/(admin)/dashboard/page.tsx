@@ -104,7 +104,7 @@ export default function DashboardOverviewPage() {
         { label: t("rentedProperties"), value: String(stats.rented_properties) },
         {
           label: t("monthlyRevenue"),
-          value: `${currencyFormatter.format(stats.monthly_revenue)} MAD`,
+          value: `${currencyFormatter.format(stats.monthly_revenue)} DH`,
         },
         { label: t("newPropertiesThisMonth"), value: String(stats.new_properties_this_month) },
       ]
@@ -218,7 +218,7 @@ export default function DashboardOverviewPage() {
                     <PropertyStatusBadge status={property.status} />
                   </TableCell>
                   <TableCell className="text-end font-mono tabular-nums">
-                    <bdi dir="ltr">{currencyFormatter.format(property.price)} MAD</bdi>
+                    <bdi dir="ltr">{currencyFormatter.format(property.price)} DH</bdi>
                   </TableCell>
                 </TableRow>
               ))}

@@ -185,7 +185,7 @@ export default function SettingsPage() {
               className={clsx(
                 "rounded-full px-3 py-1.5 transition-colors",
                 locale === activeLocale
-                  ? "bg-gold-primary text-ink"
+                  ? "bg-gold-primary text-white"
                   : "text-text-muted hover:text-text",
               )}
             >

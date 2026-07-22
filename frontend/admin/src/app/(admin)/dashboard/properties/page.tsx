@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { PropertyStatusBadge } from "@/components/properties/status-badge";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
+import { EyeIcon, PencilIcon, TrashIcon } from "@/components/ui/action-icons";
 import { ApiError } from "@/lib/api";
 import { deleteProperty, listProperties } from "@/lib/properties";
 import type { Pagination as PaginationData, Property } from "@/types/property";
@@ -150,29 +151,35 @@ export default function PropertiesListPage() {
                     <PropertyStatusBadge status={property.status} />
                   </TableCell>
                   <TableCell className="text-end font-mono tabular-nums">
-                    <bdi dir="ltr">{currencyFormatter.format(property.price)} MAD</bdi>
+                    <bdi dir="ltr">{currencyFormatter.format(property.price)} DH</bdi>
                   </TableCell>
                   <TableCell>
-                    <div className="flex justify-end gap-3 text-[0.82rem] font-semibold">
+                    <div className="flex justify-end gap-1">
                       <Link
                         href={`/dashboard/properties/${property.id}`}
-                        className="text-gold-primary hover:underline"
+                        title={t("view")}
+                        aria-label={t("view")}
+                        className="rounded-md p-2 text-text-muted hover:bg-surface-muted hover:text-gold-primary"
                       >
-                        {t("view")}
+                        <EyeIcon />
                       </Link>
                       <Link
                         href={`/dashboard/properties/${property.id}/edit`}
-                        className="text-gold-primary hover:underline"
+                        title={t("edit")}
+                        aria-label={t("edit")}
+                        className="rounded-md p-2 text-text-muted hover:bg-surface-muted hover:text-gold-primary"
                       >
-                        {t("edit")}
+                        <PencilIcon />
                       </Link>
                       <button
                         type="button"
                         onClick={() => handleDelete(property)}
                         disabled={deletingId === property.id}
-                        className="text-error hover:underline disabled:opacity-50"
+                        title={deletingId === property.id ? t("deleting") : t("delete")}
+                        aria-label={deletingId === property.id ? t("deleting") : t("delete")}
+                        className="rounded-md p-2 text-text-muted hover:bg-error/10 hover:text-error disabled:opacity-50"
                       >
-                        {deletingId === property.id ? t("deleting") : t("delete")}
+                        <TrashIcon />
                       </button>
                     </div>
                   </TableCell>

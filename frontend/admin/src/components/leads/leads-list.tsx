@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
+import { EyeIcon, TrashIcon } from "@/components/ui/action-icons";
 import { LeadStatusBadge } from "@/components/leads/status-badge";
 import { ApiError } from "@/lib/api";
 import { deleteLead, listLeads } from "@/lib/leads";
@@ -148,20 +149,24 @@ export function LeadsList({
                   </TableCell>
                   <TableCell>{dateFormatter.format(new Date(lead.created_at))}</TableCell>
                   <TableCell>
-                    <div className="flex justify-end gap-3 text-[0.82rem] font-semibold">
+                    <div className="flex justify-end gap-1">
                       <Link
                         href={`/dashboard/leads/${lead.id}`}
-                        className="text-gold-primary hover:underline"
+                        title={t("view")}
+                        aria-label={t("view")}
+                        className="rounded-md p-2 text-text-muted hover:bg-surface-muted hover:text-gold-primary"
                       >
-                        {t("view")}
+                        <EyeIcon />
                       </Link>
                       <button
                         type="button"
                         onClick={() => handleDelete(lead)}
                         disabled={deletingId === lead.id}
-                        className="text-error hover:underline disabled:opacity-50"
+                        title={deletingId === lead.id ? t("deleting") : t("delete")}
+                        aria-label={deletingId === lead.id ? t("deleting") : t("delete")}
+                        className="rounded-md p-2 text-text-muted hover:bg-error/10 hover:text-error disabled:opacity-50"
                       >
-                        {deletingId === lead.id ? t("deleting") : t("delete")}
+                        <TrashIcon />
                       </button>
                     </div>
                   </TableCell>
