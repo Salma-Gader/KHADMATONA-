@@ -406,6 +406,8 @@
     "noResultsEmpty": "No requests yet.",
     "name": "Name",
     "email": "Email",
+    "copyEmail": "Copy email",
+    "emailCopied": "Email copied!",
     "type": "Type",
     "status": "Status",
     "submittedOn": "Received on",

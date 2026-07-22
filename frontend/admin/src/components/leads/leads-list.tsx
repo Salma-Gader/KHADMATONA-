@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
-import { EyeIcon, TrashIcon } from "@/components/ui/action-icons";
+import { CheckIcon, CopyIcon, EyeIcon, MailIcon, TrashIcon } from "@/components/ui/action-icons";
 import { LeadStatusBadge } from "@/components/leads/status-badge";
 import { ApiError } from "@/lib/api";
 import { deleteLead, listLeads } from "@/lib/leads";
@@ -45,6 +45,7 @@ export function LeadsList({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -94,6 +95,12 @@ export function LeadsList({
     }
   }
 
+  async function handleCopyEmail(lead: Lead) {
+    await navigator.clipboard.writeText(lead.email);
+    setCopiedId(lead.id);
+    setTimeout(() => setCopiedId((current) => (current === lead.id ? null : current)), 1500);
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -141,8 +148,19 @@ export function LeadsList({
                   <TableCell className="max-w-[200px] truncate font-semibold">
                     {lead.name}
                   </TableCell>
-                  <TableCell className="max-w-[220px] truncate">
-                    <bdi dir="ltr">{lead.email}</bdi>
+                  <TableCell>
+                    <div className="flex items-center gap-1.5 text-text-muted">
+                      <MailIcon />
+                      <button
+                        type="button"
+                        onClick={() => handleCopyEmail(lead)}
+                        title={copiedId === lead.id ? t("emailCopied") : t("copyEmail")}
+                        aria-label={copiedId === lead.id ? t("emailCopied") : t("copyEmail")}
+                        className="rounded-md p-1.5 hover:bg-surface-muted hover:text-gold-primary"
+                      >
+                        {copiedId === lead.id ? <CheckIcon /> : <CopyIcon />}
+                      </button>
+                    </div>
                   </TableCell>
                   <TableCell>
                     <LeadStatusBadge status={lead.status} />

@@ -406,6 +406,8 @@
     "noResultsEmpty": "Aucune demande pour le moment.",
     "name": "Nom",
     "email": "Email",
+    "copyEmail": "Copier l'email",
+    "emailCopied": "Email copié !",
     "type": "Type",
     "status": "Statut",
     "submittedOn": "Reçu le",
