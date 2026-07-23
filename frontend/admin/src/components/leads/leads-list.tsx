@@ -175,15 +175,20 @@ export function LeadsList({
                   <TableCell className="max-w-[200px] truncate font-semibold">
                     {lead.name}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="max-w-[220px]">
                     <div className="flex items-center gap-1.5 text-text-muted">
-                      <MailIcon />
+                      <span className="sm:hidden">
+                        <MailIcon />
+                      </span>
+                      <bdi dir="ltr" className="hidden truncate text-text sm:inline">
+                        {lead.email}
+                      </bdi>
                       <button
                         type="button"
                         onClick={() => handleCopyEmail(lead)}
                         title={copiedEmailId === lead.id ? t("emailCopied") : t("copyEmail")}
                         aria-label={copiedEmailId === lead.id ? t("emailCopied") : t("copyEmail")}
-                        className="rounded-md p-1.5 hover:bg-surface-muted hover:text-gold-primary"
+                        className="shrink-0 rounded-md p-1.5 hover:bg-surface-muted hover:text-gold-primary"
                       >
                         {copiedEmailId === lead.id ? <CheckIcon /> : <CopyIcon />}
                       </button>
