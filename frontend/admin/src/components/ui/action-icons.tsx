@@ -44,6 +44,23 @@ export function CopyIcon() {
   );
 }
 
+export function WhatsAppIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8}>
+      <path
+        d="M12 21c-1.6 0-3.1-.4-4.4-1.1L4 21l1.1-3.5A8.9 8.9 0 1 1 12 21Z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M8.5 9.3c0-.5.4-1 1-1h.6c.3 0 .5.2.6.4l.6 1.5c.1.2 0 .5-.1.6l-.5.6c.4.9 1.1 1.6 2 2l.6-.5c.2-.1.4-.2.6-.1l1.5.6c.3.1.4.4.4.6v.6c0 .6-.5 1-1 1-3.5 0-6.3-2.8-6.3-6.3Z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function CheckIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8}>

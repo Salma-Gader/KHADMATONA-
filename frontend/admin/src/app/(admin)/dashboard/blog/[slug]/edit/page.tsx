@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { modal } from "@/lib/modal";
 import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { PostForm } from "@/components/blog/post-form";
@@ -49,6 +50,7 @@ export default function EditPostPage({
     // unaffected by the GET-route collision this page's slug fetch works
     // around (different HTTP method, no URI collision).
     await updatePost(post.id, values);
+    modal.success(t("editSuccess"));
     router.push("/dashboard/blog");
   }
 

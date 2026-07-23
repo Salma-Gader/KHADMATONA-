@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Alert } from "@/components/ui/alert";
+import { modal } from "@/lib/modal";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import {
@@ -34,7 +34,6 @@ export default function PropertiesListPage() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -42,7 +41,6 @@ export default function PropertiesListPage() {
 
     async function run() {
       setIsLoading(true);
-      setError(null);
 
       try {
         const result = await listProperties({ page, search });
@@ -51,7 +49,7 @@ export default function PropertiesListPage() {
         setPagination(result.pagination);
       } catch (caught) {
         if (cancelled) return;
-        setError(caught instanceof ApiError ? caught.message : t("genericError"));
+        modal.error(caught instanceof ApiError ? caught.message : t("genericError"));
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -71,18 +69,24 @@ export default function PropertiesListPage() {
     setSearch(searchInput.trim());
   }
 
-  async function handleDelete(property: Property) {
-    if (!confirm(t("confirmDelete", { title: property.title }))) return;
-
-    setDeletingId(property.id);
-    try {
-      await deleteProperty(property.id);
-      setProperties((current) => current.filter((p) => p.id !== property.id));
-    } catch (caught) {
-      setError(caught instanceof ApiError ? caught.message : t("deleteError"));
-    } finally {
-      setDeletingId(null);
-    }
+  function handleDelete(property: Property) {
+    modal.confirm({
+      message: t("confirmDelete", { title: property.title }),
+      confirmLabel: t("delete"),
+      cancelLabel: t("cancel"),
+      onConfirm: async () => {
+        setDeletingId(property.id);
+        try {
+          await deleteProperty(property.id);
+          setProperties((current) => current.filter((p) => p.id !== property.id));
+          modal.success(t("deleteSuccess"));
+        } catch (caught) {
+          modal.error(caught instanceof ApiError ? caught.message : t("deleteError"));
+        } finally {
+          setDeletingId(null);
+        }
+      },
+    });
   }
 
   return (
@@ -114,8 +118,6 @@ export default function PropertiesListPage() {
           {t("search")}
         </Button>
       </form>
-
-      {error && <Alert tone="error">{error}</Alert>}
 
       {isLoading ? (
         <TableSkeleton rows={6} columns={6} />

@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
+import { modal } from "@/lib/modal";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -29,14 +30,12 @@ export function LeadForm({
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFieldErrors({});
-    setFormError(null);
     setIsSubmitting(true);
 
     try {
@@ -50,7 +49,7 @@ export function LeadForm({
         }
         setFieldErrors(flattened);
       } else {
-        setFormError(caught instanceof ApiError ? caught.message : t("genericError"));
+        modal.error(caught instanceof ApiError ? caught.message : t("genericError"));
       }
     } finally {
       setIsSubmitting(false);
@@ -67,8 +66,6 @@ export function LeadForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-      {formError && <Alert tone="error">{formError}</Alert>}
-
       <Field
         label={t("fullName")}
         required

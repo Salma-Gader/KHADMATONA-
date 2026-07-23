@@ -3,9 +3,9 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { modal } from "@/lib/modal";
 import { ApiError } from "@/lib/api";
 import { listProperties } from "@/lib/properties";
-import { Alert } from "@/components/ui/alert";
 import { Pagination } from "@/components/ui/pagination";
 import { PropertyCard } from "@/components/properties/property-card";
 import { PropertyCardSkeleton } from "@/components/properties/property-card-skeleton";
@@ -39,14 +39,12 @@ export function PropertiesList() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     async function run() {
       setIsLoading(true);
-      setError(null);
 
       try {
         const result = await listProperties({
@@ -63,9 +61,7 @@ export function PropertiesList() {
         setPagination(result.pagination);
       } catch (caught) {
         if (cancelled) return;
-        setError(
-          caught instanceof ApiError ? caught.message : errors("generic"),
-        );
+        modal.error(caught instanceof ApiError ? caught.message : errors("generic"));
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -95,8 +91,6 @@ export function PropertiesList() {
   return (
     <div className="flex flex-col gap-8">
       <PropertyFilters initialValue={filters} onApply={handleApply} />
-
-      {error && <Alert tone="error">{error}</Alert>}
 
       {isLoading ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -7,9 +7,11 @@ services:
         ports:
             - '${ADMIN_PORT:-3000}:3000'
         environment:
-            # Consumed by the browser (NEXT_PUBLIC_*), not this container -
-            # the backend's own compose.yaml publishes it on the host.
-            NEXT_PUBLIC_API_URL: '${NEXT_PUBLIC_API_URL:-http://localhost}'
+            # Also read server-side (resolveApiUrl()'s SSR branch and
+            # next.config.ts's rewrites()) - "localhost" here would mean this
+            # container itself, not the Windows host where backend/compose.yaml
+            # publishes port 80, so it must be host.docker.internal instead.
+            NEXT_PUBLIC_API_URL: '${NEXT_PUBLIC_API_URL:-http://host.docker.internal}'
             WATCHPACK_POLLING: 'true'
             CHOKIDAR_USEPOLLING: 'true'
         volumes:

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
-import { Alert } from "@/components/ui/alert";
+import { modal } from "@/lib/modal";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { ApiError } from "@/lib/api";
@@ -18,7 +18,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Skip the form if the session check has already confirmed a logged-in
@@ -34,7 +33,6 @@ export default function LoginPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFieldErrors({});
-    setFormError(null);
     setIsSubmitting(true);
 
     try {
@@ -47,10 +45,10 @@ export default function LoginPage() {
             email: error.fieldError("email") ?? "",
           });
         } else {
-          setFormError(error.message);
+          modal.error(error.message);
         }
       } else {
-        setFormError(t("genericError"));
+        modal.error(t("genericError"));
       }
     } finally {
       setIsSubmitting(false);
@@ -63,12 +61,6 @@ export default function LoginPage() {
         {t("signInTitle")}
       </h2>
       <p className="mb-6 text-sm text-text-muted">{t("signInSubtitle")}</p>
-
-      {formError && (
-        <div className="mb-5">
-          <Alert tone="error">{formError}</Alert>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
         <Field

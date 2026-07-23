@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Alert } from "@/components/ui/alert";
+import { modal } from "@/lib/modal";
 import { Pagination } from "@/components/ui/pagination";
 import {
   Table,
@@ -14,7 +14,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
-import { CheckIcon, CopyIcon, EyeIcon, MailIcon, TrashIcon } from "@/components/ui/action-icons";
+import {
+  CheckIcon,
+  CopyIcon,
+  EyeIcon,
+  MailIcon,
+  TrashIcon,
+  WhatsAppIcon,
+} from "@/components/ui/action-icons";
 import { LeadStatusBadge } from "@/components/leads/status-badge";
 import { ApiError } from "@/lib/api";
 import { deleteLead, listLeads } from "@/lib/leads";
@@ -26,6 +33,14 @@ const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   month: "short",
   day: "numeric",
 });
+
+// Moroccan numbers are often typed in local format (e.g. "06 12 34 56 78")
+// rather than E.164 - wa.me needs the full international digits with no
+// leading zero, so a local trunk "0" is swapped for the "212" country code.
+function toWhatsAppDigits(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  return digits.startsWith("0") ? `212${digits.slice(1)}` : digits;
+}
 
 export function LeadsList({
   type,
@@ -43,16 +58,15 @@ export function LeadsList({
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [copiedId, setCopiedId] = useState<number | null>(null);
+  const [copiedEmailId, setCopiedEmailId] = useState<number | null>(null);
+  const [copiedPhoneId, setCopiedPhoneId] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     async function run() {
       setIsLoading(true);
-      setError(null);
 
       try {
         const result = await listLeads({ type, page, search });
@@ -61,7 +75,7 @@ export function LeadsList({
         setPagination(result.pagination);
       } catch (caught) {
         if (cancelled) return;
-        setError(caught instanceof ApiError ? caught.message : t("genericError"));
+        modal.error(caught instanceof ApiError ? caught.message : t("genericError"));
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -81,24 +95,37 @@ export function LeadsList({
     setSearch(searchInput.trim());
   }
 
-  async function handleDelete(lead: Lead) {
-    if (!confirm(t("confirmDelete", { name: lead.name }))) return;
-
-    setDeletingId(lead.id);
-    try {
-      await deleteLead(lead.id);
-      setLeads((current) => current.filter((l) => l.id !== lead.id));
-    } catch (caught) {
-      setError(caught instanceof ApiError ? caught.message : t("deleteError"));
-    } finally {
-      setDeletingId(null);
-    }
+  function handleDelete(lead: Lead) {
+    modal.confirm({
+      message: t("confirmDelete", { name: lead.name }),
+      confirmLabel: t("delete"),
+      cancelLabel: t("cancel"),
+      onConfirm: async () => {
+        setDeletingId(lead.id);
+        try {
+          await deleteLead(lead.id);
+          setLeads((current) => current.filter((l) => l.id !== lead.id));
+          modal.success(t("deleteSuccess"));
+        } catch (caught) {
+          modal.error(caught instanceof ApiError ? caught.message : t("deleteError"));
+        } finally {
+          setDeletingId(null);
+        }
+      },
+    });
   }
 
   async function handleCopyEmail(lead: Lead) {
     await navigator.clipboard.writeText(lead.email);
-    setCopiedId(lead.id);
-    setTimeout(() => setCopiedId((current) => (current === lead.id ? null : current)), 1500);
+    setCopiedEmailId(lead.id);
+    setTimeout(() => setCopiedEmailId((current) => (current === lead.id ? null : current)), 1500);
+  }
+
+  async function handleCopyPhone(lead: Lead) {
+    if (!lead.phone) return;
+    await navigator.clipboard.writeText(lead.phone);
+    setCopiedPhoneId(lead.id);
+    setTimeout(() => setCopiedPhoneId((current) => (current === lead.id ? null : current)), 1500);
   }
 
   return (
@@ -121,10 +148,8 @@ export function LeadsList({
         />
       </form>
 
-      {error && <Alert tone="error">{error}</Alert>}
-
       {isLoading ? (
-        <TableSkeleton rows={6} columns={5} />
+        <TableSkeleton rows={6} columns={6} />
       ) : leads.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border-strong bg-surface-muted p-8 text-center sm:p-12">
           <h3 className="font-display text-xl font-semibold text-text">{t("noResultsTitle")}</h3>
@@ -138,6 +163,7 @@ export function LeadsList({
             <TableHead>
               <TableHeaderCell>{t("name")}</TableHeaderCell>
               <TableHeaderCell>{t("email")}</TableHeaderCell>
+              <TableHeaderCell>{t("phone")}</TableHeaderCell>
               <TableHeaderCell>{t("status")}</TableHeaderCell>
               <TableHeaderCell>{t("submittedOn")}</TableHeaderCell>
               <TableHeaderCell className="text-end">{t("actions")}</TableHeaderCell>
@@ -154,13 +180,40 @@ export function LeadsList({
                       <button
                         type="button"
                         onClick={() => handleCopyEmail(lead)}
-                        title={copiedId === lead.id ? t("emailCopied") : t("copyEmail")}
-                        aria-label={copiedId === lead.id ? t("emailCopied") : t("copyEmail")}
+                        title={copiedEmailId === lead.id ? t("emailCopied") : t("copyEmail")}
+                        aria-label={copiedEmailId === lead.id ? t("emailCopied") : t("copyEmail")}
                         className="rounded-md p-1.5 hover:bg-surface-muted hover:text-gold-primary"
                       >
-                        {copiedId === lead.id ? <CheckIcon /> : <CopyIcon />}
+                        {copiedEmailId === lead.id ? <CheckIcon /> : <CopyIcon />}
                       </button>
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    {lead.phone ? (
+                      <div className="flex items-center gap-1">
+                        <a
+                          href={`https://wa.me/${toWhatsAppDigits(lead.phone)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={t("openWhatsapp")}
+                          aria-label={t("openWhatsapp")}
+                          className="rounded-md p-1.5 text-text-muted hover:bg-[#25D366]/15 hover:text-[#25D366]"
+                        >
+                          <WhatsAppIcon />
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => handleCopyPhone(lead)}
+                          title={copiedPhoneId === lead.id ? t("phoneCopied") : t("copyPhone")}
+                          aria-label={copiedPhoneId === lead.id ? t("phoneCopied") : t("copyPhone")}
+                          className="rounded-md p-1.5 text-text-muted hover:bg-surface-muted hover:text-gold-primary"
+                        >
+                          {copiedPhoneId === lead.id ? <CheckIcon /> : <CopyIcon />}
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-text-muted">{t("noPhone")}</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <LeadStatusBadge status={lead.status} />

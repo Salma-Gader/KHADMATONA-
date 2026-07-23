@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { modal } from "@/lib/modal";
 import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { PropertyForm } from "@/components/properties/property-form";
@@ -43,6 +44,7 @@ export default function EditPropertyPage({
 
   async function handleSubmit(values: PropertyFormValues) {
     await updateProperty(id, values);
+    modal.success(t("editSuccess"));
     router.push(`/dashboard/properties/${id}`);
   }
 

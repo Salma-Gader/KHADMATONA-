@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
-import { Alert } from "@/components/ui/alert";
+import { modal } from "@/lib/modal";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Select } from "@/components/ui/select";
@@ -39,7 +39,6 @@ export function PostForm({
     ...initialValues,
   });
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const pendingPreview = useMemo(
@@ -63,7 +62,6 @@ export function PostForm({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFieldErrors({});
-    setFormError(null);
     setIsSubmitting(true);
 
     try {
@@ -76,7 +74,7 @@ export function PostForm({
         }
         setFieldErrors(flattened);
       } else {
-        setFormError(caught instanceof ApiError ? caught.message : t("genericError"));
+        modal.error(caught instanceof ApiError ? caught.message : t("genericError"));
       }
     } finally {
       setIsSubmitting(false);
@@ -87,8 +85,6 @@ export function PostForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
-      {formError && <Alert tone="error">{formError}</Alert>}
-
       <Field
         label={t("title")}
         required

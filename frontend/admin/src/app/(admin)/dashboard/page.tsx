@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Alert } from "@/components/ui/alert";
+import { modal } from "@/lib/modal";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -44,10 +44,8 @@ export default function DashboardOverviewPage() {
   const propertyStatus = useTranslations("PropertyStatus");
   const [recentProperties, setRecentProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isStatsLoading, setIsStatsLoading] = useState(true);
-  const [statsError, setStatsError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -57,7 +55,7 @@ export default function DashboardOverviewPage() {
         if (!cancelled) setRecentProperties(result.properties);
       })
       .catch(() => {
-        if (!cancelled) setError(t("loadRecentError"));
+        if (!cancelled) modal.error(t("loadRecentError"));
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);
@@ -78,7 +76,7 @@ export default function DashboardOverviewPage() {
       })
       .catch((caught) => {
         if (cancelled) return;
-        setStatsError(caught instanceof ApiError ? caught.message : t("loadStatsError"));
+        modal.error(caught instanceof ApiError ? caught.message : t("loadStatsError"));
       })
       .finally(() => {
         if (!cancelled) setIsStatsLoading(false);
@@ -135,8 +133,6 @@ export default function DashboardOverviewPage() {
         <p className="mt-1 text-sm text-text-muted">{t("welcomeSubtitle")}</p>
       </div>
 
-      {statsError && <Alert tone="error">{statsError}</Alert>}
-
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
         {isStatsLoading
           ? Array.from({ length: 6 }).map((_, index) => (
@@ -185,8 +181,6 @@ export default function DashboardOverviewPage() {
             {t("seeAllProperties")}
           </Link>
         </div>
-
-        {error && <Alert tone="error">{error}</Alert>}
 
         {isLoading ? (
           <TableSkeleton rows={5} columns={5} />

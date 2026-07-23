@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Alert } from "@/components/ui/alert";
+import { modal } from "@/lib/modal";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
 import {
@@ -34,7 +34,6 @@ export default function BlogListPage() {
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -42,7 +41,6 @@ export default function BlogListPage() {
 
     async function run() {
       setIsLoading(true);
-      setError(null);
 
       try {
         const result = await listPosts({ page });
@@ -51,7 +49,7 @@ export default function BlogListPage() {
         setPagination(result.pagination);
       } catch (caught) {
         if (cancelled) return;
-        setError(caught instanceof ApiError ? caught.message : t("genericError"));
+        modal.error(caught instanceof ApiError ? caught.message : t("genericError"));
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -65,18 +63,24 @@ export default function BlogListPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `t` is stable per locale render
   }, [page]);
 
-  async function handleDelete(post: Post) {
-    if (!confirm(t("confirmDelete", { title: post.title }))) return;
-
-    setDeletingId(post.id);
-    try {
-      await deletePost(post.id);
-      setPosts((current) => current.filter((p) => p.id !== post.id));
-    } catch (caught) {
-      setError(caught instanceof ApiError ? caught.message : t("deleteError"));
-    } finally {
-      setDeletingId(null);
-    }
+  function handleDelete(post: Post) {
+    modal.confirm({
+      message: t("confirmDelete", { title: post.title }),
+      confirmLabel: t("delete"),
+      cancelLabel: t("cancel"),
+      onConfirm: async () => {
+        setDeletingId(post.id);
+        try {
+          await deletePost(post.id);
+          setPosts((current) => current.filter((p) => p.id !== post.id));
+          modal.success(t("deleteSuccess"));
+        } catch (caught) {
+          modal.error(caught instanceof ApiError ? caught.message : t("deleteError"));
+        } finally {
+          setDeletingId(null);
+        }
+      },
+    });
   }
 
   return (
@@ -92,8 +96,6 @@ export default function BlogListPage() {
           <Button className="w-full sm:w-auto">{t("addPost")}</Button>
         </Link>
       </div>
-
-      {error && <Alert tone="error">{error}</Alert>}
 
       {isLoading ? (
         <TableSkeleton rows={6} columns={4} />

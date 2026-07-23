@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Alert } from "@/components/ui/alert";
+import { modal } from "@/lib/modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
@@ -36,7 +36,6 @@ export default function UsersListPage() {
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -44,7 +43,6 @@ export default function UsersListPage() {
 
     async function run() {
       setIsLoading(true);
-      setError(null);
 
       try {
         const result = await listUsers(page);
@@ -53,7 +51,7 @@ export default function UsersListPage() {
         setPagination(result.pagination);
       } catch (caught) {
         if (cancelled) return;
-        setError(caught instanceof ApiError ? caught.message : t("genericError"));
+        modal.error(caught instanceof ApiError ? caught.message : t("genericError"));
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -67,18 +65,24 @@ export default function UsersListPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `t` is stable per locale render
   }, [page]);
 
-  async function handleDelete(user: User) {
-    if (!confirm(t("confirmDelete", { name: user.name }))) return;
-
-    setDeletingId(user.id);
-    try {
-      await deleteUser(user.id);
-      setUsers((current) => current.filter((u) => u.id !== user.id));
-    } catch (caught) {
-      setError(caught instanceof ApiError ? caught.message : t("deleteError"));
-    } finally {
-      setDeletingId(null);
-    }
+  function handleDelete(user: User) {
+    modal.confirm({
+      message: t("confirmDelete", { name: user.name }),
+      confirmLabel: t("delete"),
+      cancelLabel: t("cancel"),
+      onConfirm: async () => {
+        setDeletingId(user.id);
+        try {
+          await deleteUser(user.id);
+          setUsers((current) => current.filter((u) => u.id !== user.id));
+          modal.success(t("deleteSuccess"));
+        } catch (caught) {
+          modal.error(caught instanceof ApiError ? caught.message : t("deleteError"));
+        } finally {
+          setDeletingId(null);
+        }
+      },
+    });
   }
 
   return (
@@ -94,8 +98,6 @@ export default function UsersListPage() {
           <Button className="w-full sm:w-auto">{t("createUser")}</Button>
         </Link>
       </div>
-
-      {error && <Alert tone="error">{error}</Alert>}
 
       {isLoading ? (
         <TableSkeleton rows={6} columns={5} />

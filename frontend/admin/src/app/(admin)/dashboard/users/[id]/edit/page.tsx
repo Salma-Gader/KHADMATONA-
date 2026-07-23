@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { modal } from "@/lib/modal";
 import { Alert } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { UserForm } from "@/components/users/user-form";
@@ -44,6 +45,7 @@ export default function EditUserPage({
 
   async function handleSubmit(values: UserFormValues) {
     await updateUser(id, values);
+    modal.success(t("editSuccess"));
     router.push("/dashboard/users");
   }
 

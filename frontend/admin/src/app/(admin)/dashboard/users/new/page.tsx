@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { modal } from "@/lib/modal";
 import { Card } from "@/components/ui/card";
 import { UserForm } from "@/components/users/user-form";
 import { createUser } from "@/lib/users";
@@ -13,6 +14,7 @@ export default function NewUserPage() {
 
   async function handleSubmit(values: UserFormValues) {
     await createUser(values);
+    modal.success(t("createSuccess"));
     router.push("/dashboard/users");
   }
 

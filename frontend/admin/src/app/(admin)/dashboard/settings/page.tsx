@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import clsx from "clsx";
+import { modal } from "@/lib/modal";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -41,8 +42,6 @@ export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [saveSuccess, setSaveSuccess] = useState(false);
   const [activeLocale, setActiveLocale] = useState<Locale>("fr");
 
   const [plain, setPlain] = useState<PlainFields>({
@@ -105,8 +104,6 @@ export default function SettingsPage() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSaving(true);
-    setSaveError(null);
-    setSaveSuccess(false);
 
     const payloadTranslations: Record<Locale, Partial<Record<TranslatableSettingField, string>>> = {
       fr: {},
@@ -122,9 +119,9 @@ export default function SettingsPage() {
     try {
       const saved = await updateSettings({ ...plain, translations: payloadTranslations });
       setTranslations(saved.translations);
-      setSaveSuccess(true);
+      modal.success(t("saveSuccess"));
     } catch (caught) {
-      setSaveError(caught instanceof ApiError ? caught.message : t("saveError"));
+      modal.error(caught instanceof ApiError ? caught.message : t("saveError"));
     } finally {
       setIsSaving(false);
     }
@@ -146,9 +143,6 @@ export default function SettingsPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        {saveError && <Alert tone="error">{saveError}</Alert>}
-        {saveSuccess && <Alert tone="success">{t("saveSuccess")}</Alert>}
-
         <Card className="flex flex-col gap-5">
           <p className="text-[0.7rem] font-bold tracking-wide text-text-muted uppercase">
             {t("contactSection")}

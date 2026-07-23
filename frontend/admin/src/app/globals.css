@@ -423,3 +423,45 @@ h4 {
     scroll-behavior: auto !important;
   }
 }
+
+/* Popup system (ModalRoot, src/components/ui/modal-root.tsx) - Radix Dialog
+   exposes data-state="open"/"closed" on the overlay/content during its
+   mount/unmount transition, which these rules key off for a simple
+   fade+scale instead of relying on a Tailwind animation plugin this project
+   doesn't have installed. */
+.modal-overlay {
+  animation: modal-overlay-in 0.15s ease-out;
+}
+.modal-overlay[data-state="closed"] {
+  animation: modal-overlay-out 0.15s ease-in;
+}
+
+.modal-content {
+  animation: modal-content-in 0.15s ease-out;
+}
+.modal-content[data-state="closed"] {
+  animation: modal-content-out 0.15s ease-in;
+}
+
+@keyframes modal-overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes modal-overlay-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes modal-content-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+}
+@keyframes modal-content-out {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+}

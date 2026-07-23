@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
+import { modal } from "@/lib/modal";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -12,19 +13,17 @@ export default function ForgotPasswordPage() {
   const t = useTranslations("Auth");
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError(null);
     setIsSubmitting(true);
 
     try {
       await api.post("/api/v1/auth/forgot-password", { email });
       setSent(true);
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : t("genericError"));
+      modal.error(err instanceof ApiError ? err.message : t("genericError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -58,12 +57,6 @@ export default function ForgotPasswordPage() {
         {t("forgotPasswordTitle")}
       </h2>
       <p className="mb-6 text-sm text-text-muted">{t("forgotPasswordSubtitle")}</p>
-
-      {error && (
-        <div className="mb-5">
-          <Alert tone="error">{error}</Alert>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
         <Field

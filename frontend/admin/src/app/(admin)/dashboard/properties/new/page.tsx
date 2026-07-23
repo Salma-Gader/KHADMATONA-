@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { modal } from "@/lib/modal";
 import { Card } from "@/components/ui/card";
 import { PropertyForm } from "@/components/properties/property-form";
 import { createProperty } from "@/lib/properties";
@@ -13,6 +14,7 @@ export default function NewPropertyPage() {
 
   async function handleSubmit(values: PropertyFormValues) {
     const property = await createProperty(values);
+    modal.success(t("createSuccess"));
     router.push(`/dashboard/properties/${property.id}`);
   }
 

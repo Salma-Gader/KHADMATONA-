@@ -4,6 +4,7 @@ import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { modal } from "@/lib/modal";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -41,7 +42,7 @@ export default function LeadDetailPage({
   const leadStatus = useTranslations("LeadStatus");
   const [lead, setLead] = useState<Lead | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -54,7 +55,7 @@ export default function LeadDetailPage({
       })
       .catch((caught) => {
         if (cancelled) return;
-        setError(
+        setLoadError(
           caught instanceof ApiError && caught.status === 404
             ? leadDetail("notFound")
             : leadDetail("loadError"),
@@ -73,37 +74,43 @@ export default function LeadDetailPage({
   async function handleStatusChange(status: LeadStatus) {
     if (!lead) return;
     setIsUpdatingStatus(true);
-    setError(null);
     try {
       const updated = await updateLeadStatus(lead.id, status);
       setLead(updated);
+      modal.success(leadDetail("statusUpdateSuccess"));
     } catch (caught) {
-      setError(caught instanceof ApiError ? caught.message : leadDetail("statusUpdateError"));
+      modal.error(caught instanceof ApiError ? caught.message : leadDetail("statusUpdateError"));
     } finally {
       setIsUpdatingStatus(false);
     }
   }
 
-  async function handleDelete() {
+  function handleDelete() {
     if (!lead) return;
-    if (!confirm(t("confirmDelete", { name: lead.name }))) return;
-
-    setIsDeleting(true);
-    try {
-      await deleteLead(lead.id);
-      router.push(LIST_ROUTE[lead.type]);
-    } catch (caught) {
-      setError(caught instanceof ApiError ? caught.message : t("deleteError"));
-      setIsDeleting(false);
-    }
+    modal.confirm({
+      message: t("confirmDelete", { name: lead.name }),
+      confirmLabel: t("delete"),
+      cancelLabel: t("cancel"),
+      onConfirm: async () => {
+        setIsDeleting(true);
+        try {
+          await deleteLead(lead.id);
+          modal.success(t("deleteSuccess"));
+          router.push(LIST_ROUTE[lead.type]);
+        } catch (caught) {
+          modal.error(caught instanceof ApiError ? caught.message : t("deleteError"));
+          setIsDeleting(false);
+        }
+      },
+    });
   }
 
   if (isLoading) {
     return <p className="text-sm text-text-muted">{leadDetail("loading")}</p>;
   }
 
-  if (error && !lead) {
-    return <Alert tone="error">{error}</Alert>;
+  if (loadError && !lead) {
+    return <Alert tone="error">{loadError}</Alert>;
   }
 
   if (!lead) {
@@ -131,8 +138,6 @@ export default function LeadDetailPage({
           {t("delete")}
         </Button>
       </div>
-
-      {error && <Alert tone="error">{error}</Alert>}
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         <Card className="lg:col-span-2">

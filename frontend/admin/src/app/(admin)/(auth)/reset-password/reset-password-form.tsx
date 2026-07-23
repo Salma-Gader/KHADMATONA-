@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
+import { modal } from "@/lib/modal";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -19,7 +20,6 @@ export function ResetPasswordForm() {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!token || !email) {
@@ -39,7 +39,6 @@ export function ResetPasswordForm() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFieldErrors({});
-    setFormError(null);
     setIsSubmitting(true);
 
     try {
@@ -52,12 +51,11 @@ export function ResetPasswordForm() {
       router.push("/login?reset=success");
     } catch (error) {
       if (error instanceof ApiError && Object.keys(error.errors).length > 0) {
-        setFieldErrors({
-          password: error.fieldError("password") ?? "",
-          email: error.fieldError("email") ?? "",
-        });
+        const emailError = error.fieldError("email");
+        setFieldErrors({ password: error.fieldError("password") ?? "" });
+        if (emailError) modal.error(emailError);
       } else {
-        setFormError(error instanceof ApiError ? error.message : t("genericError"));
+        modal.error(error instanceof ApiError ? error.message : t("genericError"));
       }
     } finally {
       setIsSubmitting(false);
@@ -70,12 +68,6 @@ export function ResetPasswordForm() {
         {t("newPasswordTitle")}
       </h2>
       <p className="mb-6 text-sm text-text-muted">{t("newPasswordFor", { email })}</p>
-
-      {(formError || fieldErrors.email) && (
-        <div className="mb-5">
-          <Alert tone="error">{formError ?? fieldErrors.email}</Alert>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
         <Field

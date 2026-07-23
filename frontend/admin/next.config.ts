@@ -29,6 +29,11 @@ const nextConfig: NextConfig = {
     // navigation - confusing when chasing down a backend fix that isn't
     // showing up. See node_modules/next/dist/docs/.../serverComponentsHmrCache.md.
     serverComponentsHmrCache: false,
+    // Off: on by default since Next 16.1 (turbopackFileSystemCache.md), but
+    // its lockfile uses a filesystem lock that fails with EACCES over the
+    // Windows bind mount used by compose.yaml's dev container ("Permission
+    // denied (os error 13)"), crashing the container right after boot.
+    turbopackFileSystemCacheForDev: false,
   },
   // Mirrors vercel.json's rewrites for `next dev`/self-hosted `next start`,
   // neither of which read vercel.json - without this, lib/api.ts's browser

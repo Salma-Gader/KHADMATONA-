@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Alert } from "@/components/ui/alert";
+import { modal } from "@/lib/modal";
 import { Pagination } from "@/components/ui/pagination";
 import { PostCard } from "@/components/blog/post-card";
 import { PostCardSkeleton } from "@/components/blog/post-card-skeleton";
@@ -19,14 +19,12 @@ export function PostsList() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     async function run() {
       setIsLoading(true);
-      setError(null);
 
       try {
         const result = await listPosts({ page });
@@ -35,7 +33,7 @@ export function PostsList() {
         setPagination(result.pagination);
       } catch (caught) {
         if (cancelled) return;
-        setError(caught instanceof ApiError ? caught.message : errors("generic"));
+        modal.error(caught instanceof ApiError ? caught.message : errors("generic"));
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -50,8 +48,6 @@ export function PostsList() {
 
   return (
     <div className="flex flex-col gap-8">
-      {error && <Alert tone="error">{error}</Alert>}
-
       {isLoading ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (

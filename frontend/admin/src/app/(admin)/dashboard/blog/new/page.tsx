@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { modal } from "@/lib/modal";
 import { Card } from "@/components/ui/card";
 import { PostForm } from "@/components/blog/post-form";
 import { createPost } from "@/lib/blog";
@@ -13,6 +14,7 @@ export default function NewPostPage() {
 
   async function handleSubmit(values: PostFormValues) {
     await createPost(values);
+    modal.success(t("createSuccess"));
     router.push("/dashboard/blog");
   }
 

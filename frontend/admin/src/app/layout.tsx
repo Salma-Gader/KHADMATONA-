@@ -4,6 +4,7 @@ import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { AuthProvider } from "@/lib/auth-context";
+import { ModalRoot } from "@/components/ui/modal-root";
 import "./globals.css";
 
 // Bold, geometric headline face matching the reference brand look -
@@ -94,6 +95,7 @@ export default async function RootLayout({
       <body className="flex min-h-full flex-col" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>{children}</AuthProvider>
+          <ModalRoot />
         </NextIntlClientProvider>
       </body>
     </html>
