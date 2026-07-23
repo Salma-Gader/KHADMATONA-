@@ -61,6 +61,18 @@ export function WhatsAppIcon() {
   );
 }
 
+export function PhoneCallIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8}>
+      <path
+        d="M6.5 4h2.7l1.2 4-2 1.3a11.5 11.5 0 0 0 5.3 5.3l1.3-2 4 1.2v2.7a1.5 1.5 0 0 1-1.6 1.5A15.5 15.5 0 0 1 5 5.6 1.5 1.5 0 0 1 6.5 4Z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function CheckIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8}>

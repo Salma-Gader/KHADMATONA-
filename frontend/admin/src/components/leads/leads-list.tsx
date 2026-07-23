@@ -19,6 +19,7 @@ import {
   CopyIcon,
   EyeIcon,
   MailIcon,
+  PhoneCallIcon,
   TrashIcon,
   WhatsAppIcon,
 } from "@/components/ui/action-icons";
@@ -201,12 +202,23 @@ export function LeadsList({
                         >
                           <WhatsAppIcon />
                         </a>
+                        {/* Mobile: tapping straight into the dialer is more
+                            useful than copying a number you can't paste
+                            anywhere as easily as on desktop. */}
+                        <a
+                          href={`tel:${lead.phone}`}
+                          title={t("callPhone")}
+                          aria-label={t("callPhone")}
+                          className="rounded-md p-1.5 text-text-muted hover:bg-gold-primary/15 hover:text-gold-primary sm:hidden"
+                        >
+                          <PhoneCallIcon />
+                        </a>
                         <button
                           type="button"
                           onClick={() => handleCopyPhone(lead)}
                           title={copiedPhoneId === lead.id ? t("phoneCopied") : t("copyPhone")}
                           aria-label={copiedPhoneId === lead.id ? t("phoneCopied") : t("copyPhone")}
-                          className="rounded-md p-1.5 text-text-muted hover:bg-surface-muted hover:text-gold-primary"
+                          className="hidden rounded-md p-1.5 text-text-muted hover:bg-surface-muted hover:text-gold-primary sm:block"
                         >
                           {copiedPhoneId === lead.id ? <CheckIcon /> : <CopyIcon />}
                         </button>
