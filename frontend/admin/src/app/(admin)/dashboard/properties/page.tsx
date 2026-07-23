@@ -15,6 +15,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PropertyStatusBadge } from "@/components/properties/status-badge";
+import {
+  EMPTY_PROPERTY_FILTERS,
+  PropertyFilters,
+  type PropertyFiltersValue,
+} from "@/components/properties/property-filters";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
 import { EyeIcon, PencilIcon, TrashIcon } from "@/components/ui/action-icons";
 import { ApiError } from "@/lib/api";
@@ -31,10 +36,17 @@ export default function PropertiesListPage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [page, setPage] = useState(1);
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
+  const [filters, setFilters] = useState<PropertyFiltersValue>(EMPTY_PROPERTY_FILTERS);
   const [isLoading, setIsLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  const hasActiveFilters =
+    filters.search !== "" ||
+    filters.type !== "" ||
+    filters.status !== "" ||
+    filters.cityId !== "" ||
+    filters.priceMin !== "" ||
+    filters.priceMax !== "";
 
   useEffect(() => {
     let cancelled = false;
@@ -43,7 +55,15 @@ export default function PropertiesListPage() {
       setIsLoading(true);
 
       try {
-        const result = await listProperties({ page, search });
+        const result = await listProperties({
+          page,
+          search: filters.search || undefined,
+          type: filters.type || undefined,
+          status: filters.status || undefined,
+          cityId: filters.cityId ? Number(filters.cityId) : undefined,
+          priceMin: filters.priceMin ? Number(filters.priceMin) : undefined,
+          priceMax: filters.priceMax ? Number(filters.priceMax) : undefined,
+        });
         if (cancelled) return;
         setProperties(result.properties);
         setPagination(result.pagination);
@@ -61,12 +81,11 @@ export default function PropertiesListPage() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `t` is stable per locale render
-  }, [page, search]);
+  }, [page, filters]);
 
-  function handleSearchSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function handleApplyFilters(next: PropertyFiltersValue) {
+    setFilters(next);
     setPage(1);
-    setSearch(searchInput.trim());
   }
 
   function handleDelete(property: Property) {
@@ -103,21 +122,7 @@ export default function PropertiesListPage() {
         </Link>
       </div>
 
-      <form
-        onSubmit={handleSearchSubmit}
-        className="flex w-full max-w-sm items-center gap-2"
-      >
-        <input
-          type="search"
-          value={searchInput}
-          onChange={(event) => setSearchInput(event.target.value)}
-          placeholder={t("searchPlaceholder")}
-          className="w-full min-w-0 rounded-sm border-[1.5px] border-border-strong bg-surface px-3.5 py-2.5 text-[0.95rem] text-text focus-visible:border-gold-primary"
-        />
-        <Button type="submit" variant="secondary" className="shrink-0">
-          {t("search")}
-        </Button>
-      </form>
+      <PropertyFilters initialValue={filters} onApply={handleApplyFilters} />
 
       {isLoading ? (
         <TableSkeleton rows={6} columns={6} />
@@ -127,7 +132,7 @@ export default function PropertiesListPage() {
             {t("noResultsTitle")}
           </h3>
           <p className="mt-2 text-sm text-text-muted">
-            {search ? t("noResultsWithSearch") : t("noResultsEmpty")}
+            {hasActiveFilters ? t("noResultsWithSearch") : t("noResultsEmpty")}
           </p>
         </div>
       ) : (

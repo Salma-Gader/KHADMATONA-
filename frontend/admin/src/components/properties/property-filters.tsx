@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { RangeSlider } from "@/components/ui/range-slider";
 import { listCities } from "@/lib/lookup";
 import {
   PROPERTY_STATUSES,
@@ -12,6 +13,15 @@ import {
   type PropertyType,
 } from "@/types/property";
 import type { City } from "@/types/lookup";
+
+// Matches the top real bucket boundary used by the homepage's price-range
+// dropdown (hero-search.tsx's PRICE_RANGES.over6m) - keeps this slider's
+// bounds consistent with that other price-filtering UI.
+const PRICE_MIN = 0;
+const PRICE_MAX = 6_000_000;
+const PRICE_STEP = 50_000;
+
+const budgetFormatter = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
 
 export interface PropertyFiltersValue {
   search: string;
@@ -66,6 +76,19 @@ export function PropertyFilters({
   function handleReset() {
     setValue(EMPTY_PROPERTY_FILTERS);
     onApply(EMPTY_PROPERTY_FILTERS);
+  }
+
+  const budgetRange: [number, number] = [
+    value.priceMin === "" ? PRICE_MIN : Number(value.priceMin),
+    value.priceMax === "" ? PRICE_MAX : Number(value.priceMax),
+  ];
+
+  function handleBudgetChange([min, max]: [number, number]) {
+    setValue((v) => ({
+      ...v,
+      priceMin: min === PRICE_MIN ? "" : String(min),
+      priceMax: max === PRICE_MAX ? "" : String(max),
+    }));
   }
 
   return (
@@ -131,29 +154,16 @@ export function PropertyFilters({
           ))}
         </Select>
 
-        <div className="flex flex-col gap-2">
-          <span className="text-sm font-bold text-text">{t("budget")}</span>
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              min={0}
-              inputMode="numeric"
-              value={value.priceMin}
-              onChange={(event) => setValue((v) => ({ ...v, priceMin: event.target.value }))}
-              placeholder={t("min")}
-              className="w-full min-w-0 rounded-sm border-[1.5px] border-border-strong bg-surface px-3 py-2.5 text-[0.9rem] text-text focus-visible:border-gold-primary"
-            />
-            <span className="text-text-muted">–</span>
-            <input
-              type="number"
-              min={0}
-              inputMode="numeric"
-              value={value.priceMax}
-              onChange={(event) => setValue((v) => ({ ...v, priceMax: event.target.value }))}
-              placeholder={t("max")}
-              className="w-full min-w-0 rounded-sm border-[1.5px] border-border-strong bg-surface px-3 py-2.5 text-[0.9rem] text-text focus-visible:border-gold-primary"
-            />
-          </div>
+        <div className="flex flex-col justify-center lg:col-span-2">
+          <RangeSlider
+            label={t("budget")}
+            min={PRICE_MIN}
+            max={PRICE_MAX}
+            step={PRICE_STEP}
+            value={budgetRange}
+            onChange={handleBudgetChange}
+            formatValue={(amount) => `${budgetFormatter.format(amount)} DH`}
+          />
         </div>
       </div>
 

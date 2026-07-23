@@ -84,9 +84,7 @@
     "allTypesLong": "All property types",
     "status": "Status",
     "allStatuses": "All statuses",
-    "budget": "Budget (DH)",
-    "min": "Min",
-    "max": "Max",
+    "budget": "Budget",
     "applyFilters": "Filter properties",
     "resetFilters": "Reset",
     "heroSearchPlaceholder": "A city, a neighborhood, a title…",
@@ -94,11 +92,6 @@
     "location": "Location",
     "allLocations": "All cities",
     "priceRange": "Price range",
-    "anyPrice": "Any price",
-    "priceRangeUnder1M": "Under 1,000,000 DH",
-    "priceRange1MTo3M": "1,000,000 – 3,000,000 DH",
-    "priceRange3MTo6M": "3,000,000 – 6,000,000 DH",
-    "priceRangeOver6M": "6,000,000 DH and above",
     "totalCount": "{count} propert{count, plural, one {y} other {ies}} in total"
   },
   "PropertyDetail": {
